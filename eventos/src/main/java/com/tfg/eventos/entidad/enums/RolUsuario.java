@@ -1,0 +1,1 @@
+public enum RolUsuario{ADMIN, USUARIO, VALIDADOR}

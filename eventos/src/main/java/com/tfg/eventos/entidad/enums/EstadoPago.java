@@ -1,0 +1,1 @@
+public enum EstadoPago {PENDIENTE, PAGADO, CANCELADO}

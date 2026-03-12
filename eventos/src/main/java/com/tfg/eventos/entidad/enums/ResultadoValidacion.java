@@ -1,0 +1,1 @@
+public enum ResultadoValidacion {VALIDA, YA_USADA, EVENTO_INCORRECTO, QR_INVALIDO, CANCELADA}
