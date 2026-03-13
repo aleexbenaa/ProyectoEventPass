@@ -3,6 +3,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import com.tfg.eventos.entidad.enums.EstadoEntrada;
 import com.tfg.eventos.entidad.enums.EstadoPago;
+// Clase entidad de la tabla entradas, contiene sus atributos, constructores,
+// getters y setters. También sus relaciones.
 
 @Entity
 @Table(name = "entradas")

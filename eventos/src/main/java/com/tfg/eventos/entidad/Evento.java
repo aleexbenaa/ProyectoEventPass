@@ -2,6 +2,8 @@ package com.tfg.eventos.entidad;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import com.tfg.eventos.entidad.enums.EstadoEvento;
+// Clase entidad de la tabla eventos, contiene sus atributos, constructores,
+// getters y setters. También sus relaciones.
 
 @Entity
 @Table(name = "eventos")

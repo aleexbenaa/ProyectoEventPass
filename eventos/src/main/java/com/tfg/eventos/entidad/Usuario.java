@@ -1,7 +1,9 @@
 package com.tfg.eventos.entidad;
 import jakarta.persistence.*;
-import java.LocalDateTime;
+import java.time.LocalDateTime;
 import com.tfg.eventos.entidad.enums.RolUsuario;
+// Clase entidad de la tabla usuarios, contiene sus atributos, constructores,
+// getters y setters. Esta clase no tiene relaciones. 
 
 @Entity
 @Table(name = "usuarios")
@@ -76,7 +78,7 @@ public class Usuario{
         return creado_en;
     }
     
-    public void setCreadoEn(LocalDateTime creadoEn) {
+    public void setCreadoEn(LocalDateTime creado_en) {
         this.creado_en = creado_en;
     }
     
