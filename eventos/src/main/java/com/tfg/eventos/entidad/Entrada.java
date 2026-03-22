@@ -1,14 +1,16 @@
 package com.tfg.eventos.entidad;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import com.tfg.eventos.entidad.enums.EstadoEntrada;
 import com.tfg.eventos.entidad.enums.EstadoPago;
+import java.time.LocalDateTime;
+import java.util.List;
+
 // Clase entidad de la tabla entradas, contiene sus atributos, constructores,
 // getters y setters. También sus relaciones.
 
 @Entity
 @Table(name = "entradas")
-public class Entrada{
+public class Entrada {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,91 +33,85 @@ public class Entrada{
     private LocalDateTime usada_en;
 
     @ManyToOne
-    @JoinColumn(name = "id_evento", nullable = false)
-    private Evento evento;
+    @JoinColumn(name = "id_asistente", nullable = false)
+    private Asistente asistente;
 
-    @ManyToOne
-    @JoinColumn(name = "id_comprador", nullable = false)
-    private Usuario comprador;
+    @OneToMany(mappedBy = "entrada", cascade = CascadeType.ALL)
+    private List<RegistroAcceso> registros;
 
     public Entrada() {
     }
 
-    public Entrada(Long id, String qr_token, EstadoEntrada estado, EstadoPago estado_pago,
-                   LocalDateTime comprada_en, LocalDateTime usada_en,
-                   Evento evento, Usuario comprador) {
-        this.id = id;
+    public Entrada(String qr_token, EstadoEntrada estado, EstadoPago estado_pago,
+                   LocalDateTime comprada_en, Asistente asistente) {
         this.qr_token = qr_token;
         this.estado = estado;
         this.estado_pago = estado_pago;
         this.comprada_en = comprada_en;
-        this.usada_en = usada_en;
-        this.evento = evento;
-        this.comprador = comprador;
+        this.asistente = asistente;
     }
 
     public Long getId() {
         return id;
     }
-    
+
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public String getQrToken() {
         return qr_token;
     }
-    
+
     public void setQrToken(String qr_token) {
         this.qr_token = qr_token;
     }
-    
+
     public EstadoEntrada getEstado() {
         return estado;
     }
-    
+
     public void setEstado(EstadoEntrada estado) {
         this.estado = estado;
     }
-    
+
     public EstadoPago getEstadoPago() {
         return estado_pago;
     }
-    
+
     public void setEstadoPago(EstadoPago estado_pago) {
         this.estado_pago = estado_pago;
     }
-    
+
     public LocalDateTime getCompradaEn() {
         return comprada_en;
     }
-    
+
     public void setCompradaEn(LocalDateTime comprada_en) {
         this.comprada_en = comprada_en;
     }
-    
+
     public LocalDateTime getUsadaEn() {
         return usada_en;
     }
-    
+
     public void setUsadaEn(LocalDateTime usada_en) {
         this.usada_en = usada_en;
     }
-    
-    public Evento getEvento() {
-        return evento;
+
+    public Asistente getAsistente() {
+        return asistente;
     }
-    
-    public void setEvento(Evento evento) {
-        this.evento = evento;
+
+    public void setAsistente(Asistente asistente) {
+        this.asistente = asistente;
     }
-    
-    public Usuario getComprador() {
-        return comprador;
+
+    public List<RegistroAcceso> getRegistros() {
+        return registros;
     }
-    
-    public void setComprador(Usuario comprador) {
-        this.comprador = comprador;
+
+    public void setRegistros(List<RegistroAcceso> registros) {
+        this.registros = registros;
     }
-    
 }

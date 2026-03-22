@@ -1,58 +1,44 @@
 package com.tfg.eventos.servicio;
-
+import com.tfg.eventos.entidad.Entrada;
+import com.tfg.eventos.entidad.Asistente;
+import com.tfg.eventos.repositorio.EntradaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.tfg.eventos.entidad.Entrada;
-import com.tfg.eventos.repositorio.EntradaRepository;
-// Clase service de entrada con el repositorio, 
-// dos métodos y sus respectivas validaciones. 
+// Clase servicio de Entrada, contiene la lógica de negocio relacionada con entradas.
 
 @Service
 public class EntradaService {
-
     @Autowired
-    private EntradaRepository enrepo;
+    private EntradaRepository entradaRepository;
 
-    public List<Entrada> listarEntradas() {
-        return enrepo.findAll();
+    public List<Entrada> obtenerTodos() {
+        return entradaRepository.findAll();
     }
 
-    public Entrada buscarEntradaPorId(Long id){
-        Optional<Entrada> opt = enrepo.findById(id);
-        if (opt.isPresent()){
-            return opt.get();
-        } else {
-            return null;
-        }
+    public Optional<Entrada> obtenerPorId(Long id) {
+        return entradaRepository.findById(id);
     }
 
-    public Entrada guardarEntrada(Entrada entrada) {
-        if (entrada == null) {
-            throw new IllegalArgumentException("No existe la entrada a guardar.");
-        }
-        if (entrada.getQrToken() == null || entrada.getQrToken().isBlank()) {
-            throw new IllegalArgumentException("El QR es obligatorio.");
-        }
-        if (entrada.getEstado() == null) {
-            throw new IllegalArgumentException("El estado de la entrada es obligatorio.");
-        }
-        if (entrada.getEstadoPago() == null) {
-            throw new IllegalArgumentException("El estado de pago es obligatorio.");
-        }
-        if (entrada.getCompradaEn() == null) {
-            throw new IllegalArgumentException("La fecha de compra es obligatoria.");
-        }
-        if (entrada.getEvento() == null) {
-            throw new IllegalArgumentException("La entrada debe estar asociada a un evento.");
-        }
-        if (entrada.getComprador() == null) {
-            throw new IllegalArgumentException("La entrada debe tener comprador.");
-        }
+    public Optional<Entrada> obtenerPorQrToken(String qrToken) {
+        return entradaRepository.findByQrToken(qrToken);
+    }
 
-        return enrepo.save(entrada);
+    public List<Entrada> obtenerPorAsistente(Asistente asistente) {
+        return entradaRepository.findByAsistente(asistente);
+    }
+
+    public Entrada guardar(Entrada entrada) {
+        return entradaRepository.save(entrada);
+    }
+
+    public Entrada actualizar(Entrada entrada) {
+        return entradaRepository.save(entrada);
+    }
+
+    public void eliminar(Long id) {
+        entradaRepository.deleteById(id);
     }
 }

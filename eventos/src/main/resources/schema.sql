@@ -6,8 +6,9 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS validaciones;
+DROP TABLE IF EXISTS registros_acceso;
 DROP TABLE IF EXISTS entradas;
+DROP TABLE IF EXISTS asistentes;
 DROP TABLE IF EXISTS eventos;
 DROP TABLE IF EXISTS usuarios;
 
@@ -33,25 +34,51 @@ CREATE TABLE usuarios (
 -- ---------------------------------------------------------
 CREATE TABLE eventos (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    titulo VARCHAR(180) NOT NULL,
+    nombre VARCHAR(180) NOT NULL,
     descripcion TEXT NOT NULL,
     ubicacion VARCHAR(180) NOT NULL,
     fecha_inicio DATETIME(6) NOT NULL,
     fecha_fin DATETIME(6) NOT NULL,
-    aforo INT NOT NULL,
-    precio DOUBLE NOT NULL,
-    estado ENUM('BORRADOR', 'PUBLICADO', 'CANCELADO', 'FINALIZADO') NOT NULL,
+    capacidad INT NOT NULL,
+    estado ENUM('PLANIFICADO', 'PUBLICADO', 'CANCELADO', 'FINALIZADO') NOT NULL,
     creado_en DATETIME(6) NOT NULL,
-    id_creador BIGINT NOT NULL,
+    id_organizador BIGINT NOT NULL,
 
     PRIMARY KEY (id),
-    KEY idx_eventos_id_creador (id_creador),
+    KEY idx_eventos_id_organizador (id_organizador),
     KEY idx_eventos_estado (estado),
     KEY idx_eventos_fecha_inicio (fecha_inicio),
 
-    CONSTRAINT fk_eventos_usuario_creador
-        FOREIGN KEY (id_creador)
+    CONSTRAINT fk_eventos_usuario_organizador
+        FOREIGN KEY (id_organizador)
         REFERENCES usuarios(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ---------------------------------------------------------
+-- Tabla: asistentes
+-- Nota: Tabla de asociación entre usuarios y eventos
+-- ---------------------------------------------------------
+CREATE TABLE asistentes (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    registrado_en DATETIME(6) NOT NULL,
+    id_usuario BIGINT NOT NULL,
+    id_evento BIGINT NOT NULL,
+
+    PRIMARY KEY (id),
+    KEY idx_asistentes_id_usuario (id_usuario),
+    KEY idx_asistentes_id_evento (id_evento),
+
+    CONSTRAINT fk_asistentes_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuarios(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_asistentes_evento
+        FOREIGN KEY (id_evento)
+        REFERENCES eventos(id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -66,61 +93,37 @@ CREATE TABLE entradas (
     estado_pago ENUM('PENDIENTE', 'PAGADO', 'CANCELADO') NOT NULL,
     comprada_en DATETIME(6) NOT NULL,
     usada_en DATETIME(6) NULL,
-    id_evento BIGINT NOT NULL,
-    id_comprador BIGINT NOT NULL,
+    id_asistente BIGINT NOT NULL,
 
     PRIMARY KEY (id),
     UNIQUE KEY uk_entradas_qr_token (qr_token),
-    KEY idx_entradas_id_evento (id_evento),
-    KEY idx_entradas_id_comprador (id_comprador),
+    KEY idx_entradas_id_asistente (id_asistente),
     KEY idx_entradas_estado (estado),
 
-    CONSTRAINT fk_entradas_evento
-        FOREIGN KEY (id_evento)
-        REFERENCES eventos(id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_entradas_comprador
-        FOREIGN KEY (id_comprador)
-        REFERENCES usuarios(id)
+    CONSTRAINT fk_entradas_asistente
+        FOREIGN KEY (id_asistente)
+        REFERENCES asistentes(id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ---------------------------------------------------------
--- Tabla: validaciones
--- Nota: 1 entrada = 1 validación (UNIQUE en entrada_id)
+-- Tabla: registros_acceso
+-- Nota: Registro de acceso a eventos mediante entradas
 -- ---------------------------------------------------------
-CREATE TABLE validaciones (
+CREATE TABLE registros_acceso (
     id BIGINT NOT NULL AUTO_INCREMENT,
-    entrada_id BIGINT NOT NULL,
-    evento_id BIGINT NOT NULL,
-    id_validador BIGINT NOT NULL,
-    fecha_validacion DATETIME(6) NOT NULL,
-    resultado ENUM('VALIDA', 'YA_USADA', 'EVENTO_INCORRECTO', 'QR_INVALIDO', 'CANCELADA') NOT NULL,
+    fecha_acceso DATETIME(6) NOT NULL,
+    observaciones TEXT,
+    id_entrada BIGINT NOT NULL,
 
     PRIMARY KEY (id),
-    UNIQUE KEY uk_validaciones_entrada_id (entrada_id),
-    KEY idx_validaciones_evento_id (evento_id),
-    KEY idx_validaciones_id_validador (id_validador),
-    KEY idx_validaciones_resultado (resultado),
+    KEY idx_registros_acceso_id_entrada (id_entrada),
+    KEY idx_registros_acceso_fecha_acceso (fecha_acceso),
 
-    CONSTRAINT fk_validaciones_entrada
-        FOREIGN KEY (entrada_id)
+    CONSTRAINT fk_registros_acceso_entrada
+        FOREIGN KEY (id_entrada)
         REFERENCES entradas(id)
         ON UPDATE CASCADE
-        ON DELETE CASCADE,
-
-    CONSTRAINT fk_validaciones_evento
-        FOREIGN KEY (evento_id)
-        REFERENCES eventos(id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_validaciones_validador
-        FOREIGN KEY (id_validador)
-        REFERENCES usuarios(id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
+        ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,10 +1,11 @@
 package com.tfg.eventos.repositorio;
 import com.tfg.eventos.entidad.Evento;
+import com.tfg.eventos.entidad.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.Optional;
-// Clase repositorio vacía de momento ya que utilizamos los métodos
-// de jpa que vienen por defecto.
+import java.util.List;
 
-public interface EventoRepository extends JpaRepository<Evento, Long>{
+// Repositorio de Evento, contiene sus métodos de búsqueda personalizados.
 
+public interface EventoRepository extends JpaRepository<Evento, Long> {
+    List<Evento> findByOrganizador(Usuario organizador);
 }

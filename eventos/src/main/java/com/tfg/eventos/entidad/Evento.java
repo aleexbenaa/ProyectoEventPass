@@ -1,53 +1,65 @@
 package com.tfg.eventos.entidad;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import com.tfg.eventos.entidad.enums.EstadoEvento;
+import java.time.LocalDateTime;
+import java.util.List;
+
 // Clase entidad de la tabla eventos, contiene sus atributos, constructores,
 // getters y setters. También sus relaciones.
 
 @Entity
 @Table(name = "eventos")
-public class Evento{
+public class Evento {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
-    private String titulo;
+    private String nombre;
+
     @Column(nullable = false)
     private String descripcion;
-    @Column(nullable = false)
-    private String ubicacion;
+
     @Column(nullable = false)
     private LocalDateTime fecha_inicio;
+
     @Column(nullable = false)
     private LocalDateTime fecha_fin;
+
     @Column(nullable = false)
-    private int aforo;
+    private String ubicacion;
+
     @Column(nullable = false)
-    private double precio;
+    private Integer capacidad;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoEvento estado;
+
     @Column(nullable = false)
     private LocalDateTime creado_en;
+
     @ManyToOne
-    @JoinColumn(name = "id_creador", nullable = false)
-    private Usuario creado_por;
+    @JoinColumn(name = "id_organizador", nullable = false)
+    private Usuario organizador;
 
-    public Evento(){}
+    @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL)
+    private List<Asistente> asistentes;
 
-    public Evento(Long id, String titulo, String descripcion, String ubicacion, LocalDateTime fecha_inicio, LocalDateTime fecha_fin, int aforo, double precio, EstadoEvento estado, LocalDateTime creado_en, Usuario creado_por){
-        this.id = id;
-        this.titulo = titulo;
+    public Evento() {
+    }
+
+    public Evento(String nombre, String descripcion, LocalDateTime fecha_inicio,
+                  LocalDateTime fecha_fin, String ubicacion, Integer capacidad, Usuario organizador) {
+        this.nombre = nombre;
         this.descripcion = descripcion;
-        this.ubicacion = ubicacion;
         this.fecha_inicio = fecha_inicio;
         this.fecha_fin = fecha_fin;
-        this.aforo = aforo;
-        this.precio = precio;
-        this.estado = estado;
-        this.creado_en = creado_en;
-        this.creado_por = creado_por;
+        this.ubicacion = ubicacion;
+        this.capacidad = capacidad;
+        this.organizador = organizador;
+        this.estado = EstadoEvento.PLANIFICADO;
+        this.creado_en = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -58,12 +70,12 @@ public class Evento{
         this.id = id;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public String getNombre() {
+        return nombre;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public String getDescripcion() {
@@ -72,14 +84,6 @@ public class Evento{
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public String getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(String ubicacion) {
-        this.ubicacion = ubicacion;
     }
 
     public LocalDateTime getFechaInicio() {
@@ -98,20 +102,20 @@ public class Evento{
         this.fecha_fin = fecha_fin;
     }
 
-    public int getAforo() {
-        return aforo;
+    public String getUbicacion() {
+        return ubicacion;
     }
 
-    public void setAforo(int aforo) {
-        this.aforo = aforo;
+    public void setUbicacion(String ubicacion) {
+        this.ubicacion = ubicacion;
     }
 
-    public double getPrecio() {
-        return precio;
+    public Integer getCapacidad() {
+        return capacidad;
     }
 
-    public void setPrecio(double precio) {
-        this.precio = precio;
+    public void setCapacidad(Integer capacidad) {
+        this.capacidad = capacidad;
     }
 
     public EstadoEvento getEstado() {
@@ -130,12 +134,19 @@ public class Evento{
         this.creado_en = creado_en;
     }
 
-    public Usuario getCreadoPor() {
-        return creado_por;
+    public Usuario getOrganizador() {
+        return organizador;
     }
 
-    public void setCreadoPor(Usuario creado_por) {
-        this.creado_por = creado_por;
+    public void setOrganizador(Usuario organizador) {
+        this.organizador = organizador;
     }
-    
+
+    public List<Asistente> getAsistentes() {
+        return asistentes;
+    }
+
+    public void setAsistentes(List<Asistente> asistentes) {
+        this.asistentes = asistentes;
+    }
 }

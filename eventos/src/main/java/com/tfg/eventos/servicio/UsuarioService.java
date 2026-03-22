@@ -1,55 +1,39 @@
 package com.tfg.eventos.servicio;
-
+import com.tfg.eventos.entidad.Usuario;
+import com.tfg.eventos.repositorio.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.tfg.eventos.entidad.Usuario;
-import com.tfg.eventos.repositorio.UsuarioRepository;
-// Clase service de usuario con el repositorio, 
-// dos métodos y sus respectivas validaciones.
+// Clase servicio de Usuario, contiene la lógica de negocio relacionada con usuarios.
 
 @Service
 public class UsuarioService {
-
     @Autowired
-    private UsuarioRepository urepo;
+    private UsuarioRepository usuarioRepository;
 
-    public List<Usuario> listarUsuarios() {
-        return urepo.findAll();
+    public List<Usuario> obtenerTodos() {
+        return usuarioRepository.findAll();
     }
 
-    public Usuario buscarUsuarioPorId(Long id){
-        Optional<Usuario> opt = urepo.findById(id);
-        if (opt.isPresent()){
-            return opt.get();
-        } else {
-            return null;
-        }
+    public Optional<Usuario> obtenerPorId(Long id) {
+        return usuarioRepository.findById(id);
     }
 
-    public Usuario guardarUsuario(Usuario usuario) {
-        if (usuario == null) {
-            throw new IllegalArgumentException("No existe el usuario a guardar.");
-        }
-        if (usuario.getNombre() == null || usuario.getNombre().isBlank()) {
-            throw new IllegalArgumentException("El nombre es obligatorio.");
-        }
-        if (usuario.getEmail() == null || usuario.getEmail().isBlank()) {
-            throw new IllegalArgumentException("El email es obligatorio.");
-        }
-        if (usuario.getContrasenaCifrada() == null || usuario.getContrasenaCifrada().isBlank()) {
-            throw new IllegalArgumentException("La contraseña cifrada es obligatoria.");
-        }
-        if (usuario.getRol() == null) {
-            throw new IllegalArgumentException("El rol es obligatorio.");
-        }
-        if (usuario.getCreadoEn() == null) {
-            throw new IllegalArgumentException("La fecha de creación es obligatoria.");
-        }
+    public Optional<Usuario> obtenerPorEmail(String email) {
+        return usuarioRepository.findByEmail(email);
+    }
 
-        return urepo.save(usuario);
+    public Usuario guardar(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
+
+    public Usuario actualizar(Usuario usuario) {
+        return usuarioRepository.save(usuario);
+    }
+
+    public void eliminar(Long id) {
+        usuarioRepository.deleteById(id);
     }
 }
