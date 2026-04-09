@@ -20,8 +20,8 @@ public class Usuario {
     @Column(nullable = false)
     private String nombre;
 
-    @Column(nullable = false)
-    private String contrasena;
+    @Column(name = "contrasena_cifrada", nullable = false)
+    private String contrasena_cifrada;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -39,10 +39,10 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(String email, String nombre, String contrasena, RolUsuario rol) {
+    public Usuario(String email, String nombre, String contrasena_cifrada, RolUsuario rol) {
         this.email = email;
         this.nombre = nombre;
-        this.contrasena = contrasena;
+        this.contrasena_cifrada = contrasena_cifrada;
         this.rol = rol;
         this.creado_en = LocalDateTime.now();
     }
@@ -71,12 +71,12 @@ public class Usuario {
         this.nombre = nombre;
     }
 
-    public String getContrasena() {
-        return contrasena;
+    public String getContrasenaCifrada() {
+        return contrasena_cifrada;
     }
 
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
+    public void setContrasenaCifrada(String contrasena_cifrada) {
+        this.contrasena_cifrada = contrasena_cifrada;
     }
 
     public RolUsuario getRol() {

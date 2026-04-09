@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Inicio</title>
+</head>
+<body>
+
+    <nav>
+        <a th:href="@{/}">Inicio</a>
+        <a th:href="@{/eventos}">Eventos</a>
+        <a th:href="@{/login}">Iniciar sesión</a>
+    </nav>    
+
+<h1>Próximos eventos</h1>
+
+<div sec:authorize="isAnonymous()">
+    <p>Para reservar entradas, inicia sesión o regístrate.</p>
+    <a th:href="@{/login}">Iniciar sesión</a>
+    <a th:href="@{/registro}">Registrarse</a>
+</div>
+
+<div th:if="${#lists.isEmpty(eventosCercanos)}">
+    <p>No hay eventos próximos publicados.</p>
+</div>
+
+<ul th:if="${!#lists.isEmpty(eventosCercanos)}">
+    <li th:each="evento : ${eventosCercanos}">
+        <strong th:text="${evento.nombre}">Nombre</strong>
+        <span> - </span>
+        <span th:text="${evento.ubicacion}">Ubicación</span>
+        <span> - </span>
+        <span th:text="${evento.fechaInicio}">Fecha</span>
+    </li>
+</ul>
+
+</body>
+</html>
