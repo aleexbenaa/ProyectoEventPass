@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Registro</title></head>
+<body>
+<h1>Registro</h1>
+<p th:if="${param.error}" style="color: red;">Ese email ya está registrado.</p>
+<form method="post" action="/register">
+    <input name="nombre" placeholder="Nombre" required>
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="contrasena" type="password" placeholder="Contraseña" required>
+    <button type="submit">Registrarme</button>
+</form>
+</body>
+</html>

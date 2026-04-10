@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Login</title></head>
+<body>
+<h1>Login</h1>
+<p th:if="${param.error}" style="color: red;">Email o contraseña incorrectos.</p>
+<p th:if="${param.logout}" style="color: green;">Sesión cerrada correctamente.</p>
+<form method="post" action="/login">
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="contrasena" type="password" placeholder="Contraseña" required>
+    <button type="submit">Iniciar Sesión</button>
+</form>
+<p><a href="/register">Crear cuenta</a></p>
+</body>
+</html>
