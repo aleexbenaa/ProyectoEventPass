@@ -1,5 +1,6 @@
 package com.tfg.eventos.controlador;
 
+import com.tfg.eventos.repositorio.UsuarioRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class AdminEventoController{
     private final EventoService eventoService;
     private final UsuarioService usuarioService;
-    public AdminEventoController(EventoService eventoService, UsuarioService usuarioService){
+    public AdminEventoController(EventoService eventoService, UsuarioService usuarioService, UsuarioRepository usuarioRepository){
         this.eventoService = eventoService;
         this.usuarioService = usuarioService;
     }
@@ -56,21 +57,39 @@ public class AdminEventoController{
         return "redirect:/admin/eventos";
     }
     @GetMapping("/admin/eventos/{id}/editar")
-    public String editarEvento(@PathVariable Long id, Model model){
+    public String editarEvento(@PathVariable Long id, Model model, Authentication authentication){
         Optional<Evento> eventoAEditar = eventoService.obtenerPorId(id);
         if (eventoAEditar.isEmpty()){
             return "noexiste";
         }
         model.addAttribute("evento", eventoAEditar.get());
+        String adminLogueado = authentication.getName();
+        Optional<Usuario> usuarioLogueado = usuarioService.obtenerPorEmail(adminLogueado);
+        if (usuarioLogueado.isEmpty()){
+            return "noexiste";
+        }
+        Usuario usuarioReal = usuarioLogueado.get();
+        if (!usuarioReal.getId().equals(eventoAEditar.get().getOrganizador().getId())){
+            return "noexiste";
+        }
         return "admin_evento_editar";
     }
     @PostMapping("/admin/eventos/{id}")
-    public String postEvento(@PathVariable Long id, @ModelAttribute Evento eventoEditado){
+    public String postEvento(@PathVariable Long id, @ModelAttribute Evento eventoEditado, Authentication authentication){
         Optional<Evento> eventoPost = eventoService.obtenerPorId(id);
         if (eventoPost.isEmpty()) {
             return "noexiste";
         }
         Evento eventoExistente = eventoPost.get();
+        String adminLogueado = authentication.getName();
+        Optional<Usuario> usuarioLogueado = usuarioService.obtenerPorEmail(adminLogueado);
+        if (usuarioLogueado.isEmpty()){
+            return "noexiste";
+        }
+        Usuario usuarioReal = usuarioLogueado.get();
+        if (!usuarioReal.getId().equals(eventoPost.get().getOrganizador().getId())){
+            return "noexiste";
+        }
         eventoExistente.setNombre(eventoEditado.getNombre());
         eventoExistente.setDescripcion(eventoEditado.getDescripcion());
         eventoExistente.setUbicacion(eventoEditado.getUbicacion());
@@ -81,9 +100,18 @@ public class AdminEventoController{
         return "redirect:/admin/eventos";
     }
     @PostMapping("/admin/eventos/{id}/eliminar")
-    public String eliminarEvento(@PathVariable Long id) {
+    public String eliminarEvento(@PathVariable Long id, Authentication authentication) {
         Optional<Evento> eventoBuscado = eventoService.obtenerPorId(id);
         if (eventoBuscado.isEmpty()){
+            return "noexiste";
+        }
+        String adminLogueado = authentication.getName();
+        Optional<Usuario> usuarioLogueado = usuarioService.obtenerPorEmail(adminLogueado);
+        if (usuarioLogueado.isEmpty()){
+            return "noexiste";
+        }
+        Usuario usuarioReal = usuarioLogueado.get();
+        if (!usuarioReal.getId().equals(eventoBuscado.get().getOrganizador().getId())){
             return "noexiste";
         }
         eventoService.eliminar(id);
