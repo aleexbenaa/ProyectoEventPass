@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Entradas</title>
+</head>
+<body>
+    <p th:if="${#lists.isEmpty(entradas)}" style="color:red;">No tienes entradas</p>
+    <ul th:if="${!#lists.isEmpty(entradas)}">
+        <li th:each="entrada : ${entradas}">
+            <strong th:text="${entrada.qrToken}">Token entrada</strong>
+                <span> - </span>
+                <span th:text="${entrada.estado}">Estado</span>
+                <span th:text="${entrada.estadoPago}">Estado del pago</span>
+                <span th:text="${entrada.compradaEn}">Comprada en</span>
+                <span th:text="${entrada.asistente.evento.nombre}">Nombre evento</span>
+        </li>
+    </ul>
+</body>
+</html>

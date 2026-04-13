@@ -1,9 +1,7 @@
 package com.tfg.eventos.controlador;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
-import jakarta.servlet.http.HttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,33 +55,5 @@ public class AuthController {
         usuario.setCreadoEn(LocalDateTime.now());
         usuarioService.guardar(usuario);
         return "redirect:/registro_exito";
-    }
-
-    @PostMapping("/login")
-    public String iniciarSesion(@RequestParam String email,
-                                @RequestParam String contrasena,
-                                HttpSession session) {
-        String emailNormalizado = email.trim().toLowerCase();
-        Optional<Usuario> usuarioOpt = usuarioService.obtenerPorEmail(emailNormalizado);
-
-        if (usuarioOpt.isEmpty()) {
-            return "redirect:/login?error=credenciales";
-        }
-
-        Usuario usuario = usuarioOpt.get();
-        boolean contrasenaValida = passwordEncoder.matches(contrasena, usuario.getContrasenaCifrada());
-
-        if (!contrasenaValida) {
-            return "redirect:/login?error=credenciales";
-        }
-
-        session.setAttribute("usuarioLogueado", usuario);
-        return "redirect:/";
-    }
-
-    @GetMapping("/logout")
-    public String cerrarSesion(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login?logout";
     }
 }

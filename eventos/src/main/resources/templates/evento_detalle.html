@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evento</title>
+</head>
+<body>
+    <div>
+        <p th:text="${evento.nombre}"></p>
+        <p th:text="${evento.descripcion}"></p>
+        <p th:text="${evento.ubicacion}"></p>
+        <p th:text="${evento.fechaInicio}"></p>
+        <p th:text="${evento.fechaFin}"></p>
+        <a th:href="@{/eventos}">Volver a eventos</a>
+    </div>
+    
+    <p th:if="${param.ok}" style="color: green;">Reserva realizada correctamente.</p>
+    <p th:if="${param.error == 'no-publicado'}" style="color: red;">Este evento no está publicado y no se puede reservar.</p>
+    <p th:if="${param.error == 'yareservado'}" style="color: red;">Ya tienes una reserva para este evento.</p>
+    <p th:if="${param.error == 'aforo-completo'}" style="color: red;">Aforo completo.</p>
+    <form method="post" th:action="@{/eventos/{id}/reservar(id=${evento.id})}">
+        <button type="submit">Reservar entrada</button>
+    </form>
+</body>
+</html>

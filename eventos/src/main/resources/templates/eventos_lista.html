@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos</title>
+</head>
+<body>
+    <h1>Eventos publicados</h1>
+
+    <p th:if="${#lists.isEmpty(eventos)}">No hay eventos publicados.</p>
+
+    <ul th:if="${!#lists.isEmpty(eventos)}">
+        <li th:each="evento : ${eventos}">
+            <strong th:text="${evento.nombre}">Nombre evento</strong>
+            <span> - </span>
+            <span th:text="${evento.ubicacion}">Ubicación</span>
+            <a th:href="@{/eventos/{id}(id=${evento.id})}">Ver detalle</a>
+        </li>
+    </ul>
+</body>
+<nav>
+    <a th:href="@{/eventos}">Eventos</a>
+    <a th:href="@{/mis_entradas}">Mis entradas</a>
+    <a th:href="@{/logout}">Cerrar sesión</a>
+</nav>
+
+</html>
