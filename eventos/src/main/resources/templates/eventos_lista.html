@@ -1,11 +1,20 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eventos</title>
 </head>
 <body>
+    <nav>
+        <a th:href="@{/eventos}">Eventos</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/mis_entradas}">Mis entradas</a>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/eventos}">Panel admin</a>
+        <a sec:authorize="isAnonymous()" th:href="@{/login}">Login</a>
+        <a sec:authorize="isAnonymous()" th:href="@{/register}">Registro</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/logout}">Cerrar sesión</a>
+    </nav>
+
     <h1>Eventos publicados</h1>
 
     <p th:if="${#lists.isEmpty(eventos)}">No hay eventos publicados.</p>
@@ -19,10 +28,4 @@
         </li>
     </ul>
 </body>
-<nav>
-    <a th:href="@{/eventos}">Eventos</a>
-    <a th:href="@{/mis_entradas}">Mis entradas</a>
-    <a th:href="@{/logout}">Cerrar sesión</a>
-</nav>
-
 </html>

@@ -15,8 +15,9 @@ public class SeguridadConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register", "/registro_exito", "/public/**").permitAll()
+                .requestMatchers("/login", "/register", "/registro_exito", "/public/**", "/eventos", "/eventos/*").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/mis_entradas", "/eventos/*/reservar").authenticated()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
