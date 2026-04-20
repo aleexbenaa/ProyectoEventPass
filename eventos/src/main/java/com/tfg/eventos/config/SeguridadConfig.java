@@ -17,6 +17,8 @@ public class SeguridadConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/login", "/register", "/registro_exito", "/public/**", "/eventos", "/eventos/*").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/validador/**").hasRole("VALIDADOR")
+                .requestMatchers("/api/validador/**").hasRole("VALIDADOR")
                 .requestMatchers("/mis_entradas", "/eventos/*/reservar").authenticated()
                 .anyRequest().authenticated()
             )
