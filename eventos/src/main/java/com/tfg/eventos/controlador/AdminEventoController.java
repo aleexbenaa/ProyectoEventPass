@@ -1,6 +1,5 @@
 package com.tfg.eventos.controlador;
 
-import com.tfg.eventos.repositorio.UsuarioRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +11,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.tfg.eventos.entidad.Asistente;
 import com.tfg.eventos.entidad.Evento;
+import com.tfg.eventos.entidad.Entrada;
 import com.tfg.eventos.entidad.Usuario;
+import com.tfg.eventos.entidad.enums.EstadoEntrada;
 import com.tfg.eventos.entidad.enums.EstadoEvento;
+import com.tfg.eventos.servicio.AsistenteService;
+import com.tfg.eventos.servicio.EntradaService;
 import com.tfg.eventos.servicio.EventoService;
 import com.tfg.eventos.servicio.UsuarioService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,9 +27,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class AdminEventoController{
     private final EventoService eventoService;
     private final UsuarioService usuarioService;
-    public AdminEventoController(EventoService eventoService, UsuarioService usuarioService, UsuarioRepository usuarioRepository){
+    private final AsistenteService asistenteService;
+    private final EntradaService entradaService;
+
+    public AdminEventoController(EventoService eventoService,
+                                 UsuarioService usuarioService,
+                                 AsistenteService asistenteService,
+                                 EntradaService entradaService){
         this.eventoService = eventoService;
         this.usuarioService = usuarioService;
+        this.asistenteService = asistenteService;
+        this.entradaService = entradaService;
     }
     @GetMapping("/admin/eventos")
     public String eventosAdmin(Model model, Authentication authentication) {
@@ -117,5 +129,41 @@ public class AdminEventoController{
         eventoService.eliminar(id);
         return "redirect:/admin/eventos";
     }
-    
+    @GetMapping("/admin/dashboard")
+    public String adminDashboard(Authentication authentication, Model model){
+        String mailAdmin = authentication.getName();
+        Optional<Usuario> usuarioAdmin = usuarioService.obtenerPorEmail(mailAdmin);
+        if (usuarioAdmin.isEmpty()){
+            return "noexiste";
+        }
+        Usuario usuarioReal = usuarioAdmin.get();
+        List<Evento> eventosAdmin = eventoService.obtenerPorOrganizador(usuarioReal);
+        int totalEventos = eventosAdmin.size();
+        int eventosPublicados = 0;
+        int entradasVendidas = 0;
+        int entradasUsadas = 0;
+
+        for(Evento evento : eventosAdmin){
+            if (evento.getEstado() == EstadoEvento.PUBLICADO){
+                eventosPublicados++;
+            }
+
+            List<Asistente> asistentesEvento = asistenteService.obtenerPorEvento(evento);
+            for (Asistente asistente : asistentesEvento) {
+                List<Entrada> entradasAsistente = entradaService.obtenerPorAsistente(asistente);
+                entradasVendidas += entradasAsistente.size();
+                for (Entrada entrada : entradasAsistente) {
+                    if (entrada.getEstado() == EstadoEntrada.USADA) {
+                        entradasUsadas++;
+                    }
+                }
+            }
+        }
+
+        model.addAttribute("totalEventos", totalEventos);
+        model.addAttribute("eventosPublicados", eventosPublicados);
+        model.addAttribute("entradasVendidas", entradasVendidas);
+        model.addAttribute("entradasUsadas", entradasUsadas);
+        return "admin_dashboard";
+    }
 }

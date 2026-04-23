@@ -40,18 +40,26 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registrarUsuario(@RequestParam String nombre, @RequestParam String email, @RequestParam String contrasena) {
+    public String registrarUsuario(@RequestParam String nombre,
+                                   @RequestParam String email,
+                                   @RequestParam String contrasena,
+                                   @RequestParam String rol) {
         String emailNormalizado = email.trim().toLowerCase();
 
         if (usuarioService.obtenerPorEmail(emailNormalizado).isPresent()) {
             return "redirect:/register?error=email";
         }
 
+        RolUsuario rolAsignado = RolUsuario.USUARIO;
+        if ("ADMIN".equalsIgnoreCase(rol)) {
+            rolAsignado = RolUsuario.ADMIN;
+        }
+
         Usuario usuario = new Usuario();
         usuario.setNombre(nombre);
         usuario.setEmail(emailNormalizado);
         usuario.setContrasenaCifrada(passwordEncoder.encode(contrasena));
-        usuario.setRol(RolUsuario.USUARIO);
+        usuario.setRol(rolAsignado);
         usuario.setCreadoEn(LocalDateTime.now());
         usuarioService.guardar(usuario);
         return "redirect:/registro_exito";
