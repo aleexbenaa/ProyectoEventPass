@@ -1,6 +1,8 @@
 package com.tfg.eventos.entidad;
 import jakarta.persistence.*;
 import com.tfg.eventos.entidad.enums.RolUsuario;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,7 +26,8 @@ public class Usuario {
     private String contrasena_cifrada;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(nullable = false, columnDefinition = "rol_usuario")
     private RolUsuario rol;
 
     @Column(nullable = false)

@@ -1,6 +1,8 @@
 package com.tfg.eventos.entidad;
 import jakarta.persistence.*;
 import com.tfg.eventos.entidad.enums.EstadoEvento;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,7 +35,8 @@ public class Evento {
     private Integer capacidad;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(nullable = false, columnDefinition = "estado_evento")
     private EstadoEvento estado;
 
     @Column(nullable = false)

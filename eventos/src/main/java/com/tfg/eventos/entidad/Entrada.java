@@ -2,6 +2,8 @@ package com.tfg.eventos.entidad;
 import jakarta.persistence.*;
 import com.tfg.eventos.entidad.enums.EstadoEntrada;
 import com.tfg.eventos.entidad.enums.EstadoPago;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,11 +21,13 @@ public class Entrada {
     private String qr_token;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(nullable = false, columnDefinition = "estado_entrada")
     private EstadoEntrada estado;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(nullable = false, columnDefinition = "estado_pago")
     private EstadoPago estado_pago;
 
     @Column(nullable = false)
