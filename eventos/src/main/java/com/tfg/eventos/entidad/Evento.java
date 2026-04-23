@@ -49,6 +49,14 @@ public class Evento {
     @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL)
     private List<Asistente> asistentes;
 
+    @ManyToMany
+    @JoinTable(
+            name = "evento_validadores",
+            joinColumns = @JoinColumn(name = "id_evento"),
+            inverseJoinColumns = @JoinColumn(name = "id_validador")
+    )
+    private List<Usuario> validadores;
+
     public Evento() {
     }
 
@@ -151,5 +159,13 @@ public class Evento {
 
     public void setAsistentes(List<Asistente> asistentes) {
         this.asistentes = asistentes;
+    }
+
+    public List<Usuario> getValidadores() {
+        return validadores;
+    }
+
+    public void setValidadores(List<Usuario> validadores) {
+        this.validadores = validadores;
     }
 }

@@ -1,6 +1,7 @@
 package com.tfg.eventos.controlador;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tfg.eventos.entidad.Asistente;
 import com.tfg.eventos.entidad.Evento;
@@ -53,16 +55,22 @@ public class AdminEventoController{
     public String nuevoEvento(Model model){
         Evento evento = new Evento();
         model.addAttribute("evento", evento);
+        model.addAttribute("validadoresDisponibles", usuarioService.obtenerValidadores());
+        model.addAttribute("validadoresSeleccionadosIds", new ArrayList<Long>());
         return "admin_evento_nuevo";
     }
     @PostMapping("/admin/eventos")
-    public String postEvento(@ModelAttribute Evento evento, Authentication authentication) {
+    public String postEvento(@ModelAttribute Evento evento,
+                             @RequestParam(value = "validadoresIds", required = false) List<Long> validadoresIds,
+                             Authentication authentication) {
         Optional<Usuario> admin = usuarioService.obtenerPorEmail(authentication.getName());
         if (admin.isEmpty()){
             return "noexiste";
         }
         Usuario administrador = admin.get();
+        List<Usuario> validadores = usuarioService.obtenerValidadoresPorIds(validadoresIds);
         evento.setOrganizador(administrador);
+        evento.setValidadores(validadores);
         evento.setEstado(EstadoEvento.PLANIFICADO);
         evento.setCreadoEn(LocalDateTime.now());
         eventoService.guardar(evento);
@@ -84,10 +92,21 @@ public class AdminEventoController{
         if (!usuarioReal.getId().equals(eventoAEditar.get().getOrganizador().getId())){
             return "noexiste";
         }
+        List<Long> validadoresSeleccionadosIds = new ArrayList<Long>();
+        if (eventoAEditar.get().getValidadores() != null) {
+            for (Usuario validador : eventoAEditar.get().getValidadores()) {
+                validadoresSeleccionadosIds.add(validador.getId());
+            }
+        }
+        model.addAttribute("validadoresDisponibles", usuarioService.obtenerValidadores());
+        model.addAttribute("validadoresSeleccionadosIds", validadoresSeleccionadosIds);
         return "admin_evento_editar";
     }
     @PostMapping("/admin/eventos/{id}")
-    public String postEvento(@PathVariable Long id, @ModelAttribute Evento eventoEditado, Authentication authentication){
+    public String postEvento(@PathVariable Long id,
+                             @ModelAttribute Evento eventoEditado,
+                             @RequestParam(value = "validadoresIds", required = false) List<Long> validadoresIds,
+                             Authentication authentication){
         Optional<Evento> eventoPost = eventoService.obtenerPorId(id);
         if (eventoPost.isEmpty()) {
             return "noexiste";
@@ -108,6 +127,7 @@ public class AdminEventoController{
         eventoExistente.setFechaInicio(eventoEditado.getFechaInicio());
         eventoExistente.setFechaFin(eventoEditado.getFechaFin());
         eventoExistente.setCapacidad(eventoEditado.getCapacidad());
+        eventoExistente.setValidadores(usuarioService.obtenerValidadoresPorIds(validadoresIds));
         eventoService.guardar(eventoExistente);
         return "redirect:/admin/eventos";
     }

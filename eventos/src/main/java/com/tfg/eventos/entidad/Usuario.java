@@ -39,6 +39,9 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Asistente> asistentes;
 
+    @ManyToMany(mappedBy = "validadores")
+    private List<Evento> eventosAsignados;
+
     public Usuario() {
     }
 
@@ -112,5 +115,13 @@ public class Usuario {
 
     public void setAsistentes(List<Asistente> asistentes) {
         this.asistentes = asistentes;
+    }
+
+    public List<Evento> getEventosAsignados() {
+        return eventosAsignados;
+    }
+
+    public void setEventosAsignados(List<Evento> eventosAsignados) {
+        this.eventosAsignados = eventosAsignados;
     }
 }
