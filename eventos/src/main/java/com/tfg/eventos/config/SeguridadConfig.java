@@ -15,7 +15,21 @@ public class SeguridadConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/register", "/registro_exito", "/public/**", "/eventos", "/eventos/*").permitAll()
+                .requestMatchers(
+                    "/",
+                    "/login",
+                    "/register",
+                    "/registro_exito",
+                    "/public/**",
+                    "/eventos",
+                    "/eventos/*",
+                    "/css/**",
+                    "/js/**",
+                    "/images/**",
+                    "/uploads/**",
+                    "/webjars/**",
+                    "/favicon.ico"
+                ).permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/validador/**").hasRole("VALIDADOR")
                 .requestMatchers("/api/validador/**").hasRole("VALIDADOR")

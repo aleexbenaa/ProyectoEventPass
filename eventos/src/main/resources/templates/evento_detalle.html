@@ -3,33 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evento</title>
+    <title>Detalles del Evento | EventPass</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body>
-    <nav>
-        <a th:href="@{/eventos}">Eventos</a>
-        <a sec:authorize="isAuthenticated()" th:href="@{/mis_entradas}">Mis entradas</a>
-        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/eventos}">Panel admin</a>
-        <a sec:authorize="isAnonymous()" th:href="@{/login}">Login</a>
-        <a sec:authorize="isAnonymous()" th:href="@{/register}">Registro</a>
-        <a sec:authorize="isAuthenticated()" th:href="@{/logout}">Cerrar sesión</a>
-    </nav>
+    <div th:replace="fragments/header :: header"></div>
 
-    <div>
-        <p th:text="${evento.nombre}"></p>
-        <p th:text="${evento.descripcion}"></p>
-        <p th:text="${evento.ubicacion}"></p>
-        <p th:text="${evento.fechaInicio}"></p>
-        <p th:text="${evento.fechaFin}"></p>
-        <a th:href="@{/eventos}">Volver a eventos</a>
-    </div>
-    
-    <p th:if="${param.ok}" style="color: green;">Reserva realizada correctamente.</p>
-    <p th:if="${param.error == 'no-publicado'}" style="color: red;">Este evento no está publicado y no se puede reservar.</p>
-    <p th:if="${param.error == 'yareservado'}" style="color: red;">Ya tienes una reserva para este evento.</p>
-    <p th:if="${param.error == 'aforo-completo'}" style="color: red;">Aforo completo.</p>
-    <form method="post" th:action="@{/eventos/{id}/reservar(id=${evento.id})}">
-        <button type="submit">Reservar entrada</button>
-    </form>
+    <main class="container">
+        <div class="event-detail-card">
+            <h1 th:text="${evento.nombre}" style="margin-bottom: 0.5rem; color: var(--primary-color);">Nombre del Evento</h1>
+
+            <div th:if="${evento.imagenUrl != null}" style="margin-bottom: 1.25rem;">
+                <img th:src="${evento.imagenUrl}" th:alt="${'Imagen de ' + evento.nombre}" class="event-detail-image">
+            </div>
+
+            <div class="event-meta">
+                <p><strong>Ubicación:</strong> <span th:text="${evento.ubicacion}">Ubicación</span></p>
+                <p><strong>Fecha de Inicio:</strong> <span th:text="${#temporals.format(evento.fechaInicio, 'dd/MM/yyyy HH:mm')}">Inicio</span></p>
+                <p><strong>Fecha de Fin:</strong> <span th:text="${#temporals.format(evento.fechaFin, 'dd/MM/yyyy HH:mm')}">Fin</span></p>
+            </div>
+
+            <div style="margin-bottom: 2rem;">
+                <h3>Acerca del Evento</h3>
+                <p th:text="${evento.descripcion}" style="white-space: pre-line;">Descripción larga del evento.</p>
+            </div>
+
+            <!-- Alertas de mensajes -->
+            <div th:if="${param.ok}" style="background-color: var(--success-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+                ¡Reserva realizada correctamente! Te esperamos en el evento.
+            </div>
+            <div th:if="${param.error == 'no-publicado'}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+                Este evento no está publicado y no se puede reservar.
+            </div>
+            <div th:if="${param.error == 'yareservado'}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+                Ya tienes una reserva activa para este evento.
+            </div>
+            <div th:if="${param.error == 'aforo-completo'}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+                Lo sentimos, el aforo para este evento está completo.
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <form method="post" th:action="@{/eventos/{id}/reservar(id=${evento.id})}">
+                    <button type="submit" class="btn btn-primary" style="font-size: 1.1rem; padding: 0.75rem 2rem;">Reservar Entrada</button>
+                </form>
+                <a th:href="@{/eventos}" class="btn btn-outline">Volver a Eventos</a>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>

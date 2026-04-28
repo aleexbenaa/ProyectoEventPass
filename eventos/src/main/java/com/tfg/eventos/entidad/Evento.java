@@ -34,6 +34,9 @@ public class Evento {
     @Column(nullable = false)
     private Integer capacidad;
 
+    @Column(name = "imagen_url")
+    private String imagen_url;
+
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false, columnDefinition = "estado_evento")
@@ -127,6 +130,14 @@ public class Evento {
 
     public void setCapacidad(Integer capacidad) {
         this.capacidad = capacidad;
+    }
+
+    public String getImagenUrl() {
+        return imagen_url;
+    }
+
+    public void setImagenUrl(String imagen_url) {
+        this.imagen_url = imagen_url;
     }
 
     public EstadoEvento getEstado() {
