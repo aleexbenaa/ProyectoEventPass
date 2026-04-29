@@ -4,6 +4,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -12,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tfg.eventos.entidad.Asistente;
 import com.tfg.eventos.entidad.Evento;
@@ -27,6 +34,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class AdminEventoController{
+    private static final Path UPLOAD_DIR = Paths.get("uploads", "eventos").toAbsolutePath().normalize();
+
     private final EventoService eventoService;
     private final UsuarioService usuarioService;
     private final AsistenteService asistenteService;
@@ -49,7 +58,7 @@ public class AdminEventoController{
         }
         List<Evento> eventosAdmin = eventoService.obtenerPorOrganizador(adminLogueado.get());
         model.addAttribute("eventos", eventosAdmin);
-        return "admin_eventos";
+        return "admin/eventos";
     }
     @GetMapping("/admin/eventos/nuevo")
     public String nuevoEvento(Model model){
@@ -57,11 +66,12 @@ public class AdminEventoController{
         model.addAttribute("evento", evento);
         model.addAttribute("validadoresDisponibles", usuarioService.obtenerValidadores());
         model.addAttribute("validadoresSeleccionadosIds", new ArrayList<Long>());
-        return "admin_evento_nuevo";
+        return "admin/evento_form";
     }
     @PostMapping("/admin/eventos")
     public String postEvento(@ModelAttribute Evento evento,
                              @RequestParam(value = "validadoresIds", required = false) List<Long> validadoresIds,
+                             @RequestParam(value = "imagenFile", required = false) MultipartFile imagenFile,
                              Authentication authentication) {
         Optional<Usuario> admin = usuarioService.obtenerPorEmail(authentication.getName());
         if (admin.isEmpty()){
@@ -71,6 +81,7 @@ public class AdminEventoController{
         List<Usuario> validadores = usuarioService.obtenerValidadoresPorIds(validadoresIds);
         evento.setOrganizador(administrador);
         evento.setValidadores(validadores);
+        evento.setImagenUrl(guardarImagenEvento(imagenFile));
         evento.setEstado(EstadoEvento.PLANIFICADO);
         evento.setCreadoEn(LocalDateTime.now());
         eventoService.guardar(evento);
@@ -100,12 +111,13 @@ public class AdminEventoController{
         }
         model.addAttribute("validadoresDisponibles", usuarioService.obtenerValidadores());
         model.addAttribute("validadoresSeleccionadosIds", validadoresSeleccionadosIds);
-        return "admin_evento_editar";
+        return "admin/evento_form";
     }
     @PostMapping("/admin/eventos/{id}")
     public String postEvento(@PathVariable Long id,
                              @ModelAttribute Evento eventoEditado,
                              @RequestParam(value = "validadoresIds", required = false) List<Long> validadoresIds,
+                             @RequestParam(value = "imagenFile", required = false) MultipartFile imagenFile,
                              Authentication authentication){
         Optional<Evento> eventoPost = eventoService.obtenerPorId(id);
         if (eventoPost.isEmpty()) {
@@ -128,9 +140,37 @@ public class AdminEventoController{
         eventoExistente.setFechaFin(eventoEditado.getFechaFin());
         eventoExistente.setCapacidad(eventoEditado.getCapacidad());
         eventoExistente.setValidadores(usuarioService.obtenerValidadoresPorIds(validadoresIds));
+        String imagenSubida = guardarImagenEvento(imagenFile);
+        if (imagenSubida != null) {
+            eventoExistente.setImagenUrl(imagenSubida);
+        }
         eventoService.guardar(eventoExistente);
         return "redirect:/admin/eventos";
     }
+
+    @PostMapping("/admin/eventos/{id}/publicar")
+    public String publicarEvento(@PathVariable Long id, Authentication authentication) {
+        Optional<Evento> eventoBuscado = eventoService.obtenerPorId(id);
+        if (eventoBuscado.isEmpty()) {
+            return "noexiste";
+        }
+
+        Optional<Usuario> usuarioLogueado = usuarioService.obtenerPorEmail(authentication.getName());
+        if (usuarioLogueado.isEmpty()) {
+            return "noexiste";
+        }
+
+        Evento evento = eventoBuscado.get();
+        Usuario admin = usuarioLogueado.get();
+        if (!admin.getId().equals(evento.getOrganizador().getId())) {
+            return "noexiste";
+        }
+
+        evento.setEstado(EstadoEvento.PUBLICADO);
+        eventoService.guardar(evento);
+        return "redirect:/admin/eventos";
+    }
+
     @PostMapping("/admin/eventos/{id}/eliminar")
     public String eliminarEvento(@PathVariable Long id, Authentication authentication) {
         Optional<Evento> eventoBuscado = eventoService.obtenerPorId(id);
@@ -184,6 +224,32 @@ public class AdminEventoController{
         model.addAttribute("eventosPublicados", eventosPublicados);
         model.addAttribute("entradasVendidas", entradasVendidas);
         model.addAttribute("entradasUsadas", entradasUsadas);
-        return "admin_dashboard";
+        return "admin/dashboard";
+    }
+
+    private String guardarImagenEvento(MultipartFile imagenFile) {
+        if (imagenFile == null || imagenFile.isEmpty()) {
+            return null;
+        }
+
+        String originalName = imagenFile.getOriginalFilename();
+        String extension = "";
+        if (originalName != null) {
+            int lastDot = originalName.lastIndexOf('.');
+            if (lastDot >= 0) {
+                extension = originalName.substring(lastDot);
+            }
+        }
+
+        String nombreArchivo = UUID.randomUUID() + extension;
+        Path destino = UPLOAD_DIR.resolve(nombreArchivo);
+
+        try {
+            Files.createDirectories(UPLOAD_DIR);
+            Files.copy(imagenFile.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
+            return "/uploads/eventos/" + nombreArchivo;
+        } catch (IOException ex) {
+            throw new RuntimeException("No se pudo guardar la imagen del evento", ex);
+        }
     }
 }

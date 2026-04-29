@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <header th:fragment="header" class="navbar">
+        <a th:href="@{/}" class="navbar-brand">
+            <span class="brand-event">Event</span><span class="brand-pass">Pass</span>
+        </a>
+
+        <nav class="nav-links">
+            <a th:href="@{/eventos}">Explorar</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/mis_entradas}">Mis entradas</a>
+
+            <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-outline">Iniciar Sesión</a>
+            <a sec:authorize="isAnonymous()" th:href="@{/register}" class="btn btn-primary">Registrarse</a>
+
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/eventos}" class="btn btn-outline">Panel Admin</a>
+            <a sec:authorize="isAuthenticated()" th:href="@{/logout}" class="btn btn-danger">Cerrar Sesión</a>
+        </nav>
+    </header>
+</body>
+</html>

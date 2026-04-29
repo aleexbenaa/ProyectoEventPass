@@ -3,26 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Entradas</title>
+    <title>Mis Entradas | EventPass</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
 </head>
 <body>
-    <nav>
-        <a th:href="@{/eventos}">Eventos</a>
-        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/eventos}">Panel admin</a>
-        <a sec:authorize="isAuthenticated()" th:href="@{/logout}">Cerrar sesión</a>
-    </nav>
+    <div th:replace="fragments/header :: header"></div>
 
-    <h1>Mis entradas</h1>
-    <p th:if="${#lists.isEmpty(entradas)}" style="color:red;">No tienes entradas</p>
-    <ul th:if="${!#lists.isEmpty(entradas)}">
-        <li th:each="entrada : ${entradas}">
-            <strong th:text="${entrada.qrToken}">Token entrada</strong>
-                <span> - </span>
-                <span th:text="${entrada.estado}">Estado</span>
-                <span th:text="${entrada.estadoPago}">Estado del pago</span>
-                <span th:text="${entrada.compradaEn}">Comprada en</span>
-                <span th:text="${entrada.asistente.evento.nombre}">Nombre evento</span>
-        </li>
-    </ul>
+    <main class="container">
+        <div class="admin-header">
+            <div>
+                <h1>Mis entradas</h1>
+                <p style="color: var(--text-light);">Aqui puedes consultar todas tus entradas y su estado.</p>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(entradas)}" class="form-container" style="text-align: center; max-width: 600px;">
+            <p>No tienes entradas</p>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(entradas)}" class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Evento</th>
+                        <th>Token</th>
+                        <th>Estado</th>
+                        <th>Pago</th>
+                        <th>Comprada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entrada : ${entradas}">
+                        <td th:text="${entrada.asistente.evento.nombre}">Nombre evento</td>
+                        <td th:text="${entrada.qrToken}">Token entrada</td>
+                        <td th:text="${entrada.estado}">Estado</td>
+                        <td th:text="${entrada.estadoPago}">Estado pago</td>
+                        <td th:text="${#temporals.format(entrada.compradaEn, 'dd/MM/yyyy HH:mm')}">Comprada en</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>
