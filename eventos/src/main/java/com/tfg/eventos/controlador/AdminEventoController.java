@@ -4,12 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.UUID;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -29,26 +23,29 @@ import com.tfg.eventos.entidad.enums.EstadoEvento;
 import com.tfg.eventos.servicio.AsistenteService;
 import com.tfg.eventos.servicio.EntradaService;
 import com.tfg.eventos.servicio.EventoService;
+import com.tfg.eventos.servicio.SupabaseStorageService;
 import com.tfg.eventos.servicio.UsuarioService;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class AdminEventoController{
-    private static final Path UPLOAD_DIR = Paths.get("uploads", "eventos").toAbsolutePath().normalize();
 
     private final EventoService eventoService;
     private final UsuarioService usuarioService;
     private final AsistenteService asistenteService;
     private final EntradaService entradaService;
+    private final SupabaseStorageService supabaseStorageService;
 
     public AdminEventoController(EventoService eventoService,
                                  UsuarioService usuarioService,
                                  AsistenteService asistenteService,
-                                 EntradaService entradaService){
+                                 EntradaService entradaService,
+                                 SupabaseStorageService supabaseStorageService){
         this.eventoService = eventoService;
         this.usuarioService = usuarioService;
         this.asistenteService = asistenteService;
         this.entradaService = entradaService;
+        this.supabaseStorageService = supabaseStorageService;
     }
     @GetMapping("/admin/eventos")
     public String eventosAdmin(Model model, Authentication authentication) {
@@ -228,28 +225,6 @@ public class AdminEventoController{
     }
 
     private String guardarImagenEvento(MultipartFile imagenFile) {
-        if (imagenFile == null || imagenFile.isEmpty()) {
-            return null;
-        }
-
-        String originalName = imagenFile.getOriginalFilename();
-        String extension = "";
-        if (originalName != null) {
-            int lastDot = originalName.lastIndexOf('.');
-            if (lastDot >= 0) {
-                extension = originalName.substring(lastDot);
-            }
-        }
-
-        String nombreArchivo = UUID.randomUUID() + extension;
-        Path destino = UPLOAD_DIR.resolve(nombreArchivo);
-
-        try {
-            Files.createDirectories(UPLOAD_DIR);
-            Files.copy(imagenFile.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
-            return "/uploads/eventos/" + nombreArchivo;
-        } catch (IOException ex) {
-            throw new RuntimeException("No se pudo guardar la imagen del evento", ex);
-        }
+        return supabaseStorageService.subirImagen(imagenFile);
     }
 }

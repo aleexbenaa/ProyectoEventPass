@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Admin EventPass</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"></div>
+
+    <main class="container">
+        <div class="admin-header">
+            <div>
+                <h1 style="color: var(--primary-color);">Panel de Control</h1>
+                <p style="color: var(--text-light);">Resumen de la actividad de tus eventos.</p>
+            </div>
+            <a th:href="@{/admin/eventos}" class="btn btn-primary">Gestionar Eventos</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" th:text="${totalEventos}">0</div>
+                <div class="stat-label">Total Eventos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${eventosPublicados}">0</div>
+                <div class="stat-label">Eventos Publicados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${entradasVendidas}">0</div>
+                <div class="stat-label">Entradas Vendidas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" th:text="${entradasUsadas}">0</div>
+                <div class="stat-label">Entradas Validadas</div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
