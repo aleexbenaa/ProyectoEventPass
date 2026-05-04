@@ -14,11 +14,14 @@ import com.tfg.eventos.entidad.Usuario;
 import com.tfg.eventos.entidad.enums.EstadoEntrada;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -38,6 +41,47 @@ public class ValidadorApiController {
         this.registroAccesoService = registroAccesoService;
         this.usuarioService = usuarioService;
         this.eventoService = eventoService;
+    }
+
+    @GetMapping("/api/validador/eventos")
+    public List<EventoAsignadoResponse> obtenerEventosAsignados(Authentication authentication) {
+        List<EventoAsignadoResponse> respuesta = new ArrayList<>();
+
+        if (authentication == null || authentication.getName() == null) {
+            return respuesta;
+        }
+
+        Optional<Usuario> validadorLogueado = usuarioService.obtenerPorEmail(authentication.getName());
+        if (validadorLogueado.isEmpty()) {
+            return respuesta;
+        }
+
+        List<Evento> eventos = eventoService.obtenerTodos();
+        for (Evento evento : eventos) {
+            if (evento.getValidadores() == null) {
+                continue;
+            }
+
+            boolean asignado = false;
+            for (Usuario validador : evento.getValidadores()) {
+                if (validador.getId().equals(validadorLogueado.get().getId())) {
+                    asignado = true;
+                    break;
+                }
+            }
+
+            if (asignado) {
+                EventoAsignadoResponse eventoResponse = new EventoAsignadoResponse();
+                eventoResponse.setId(evento.getId());
+                eventoResponse.setNombre(evento.getNombre());
+                eventoResponse.setUbicacion(evento.getUbicacion());
+                eventoResponse.setFechaInicio(evento.getFechaInicio());
+                eventoResponse.setFechaFin(evento.getFechaFin());
+                respuesta.add(eventoResponse);
+            }
+        }
+
+        return respuesta;
     }
 
     @PostMapping("/api/validador/validar")
@@ -81,7 +125,7 @@ public class ValidadorApiController {
         }
 
         Optional<Entrada> entradaABuscar = entradaService.obtenerPorQrToken(request.getQrToken());
-        
+
         if (entradaABuscar.isEmpty()){
             respuesta.put("estado", "noexiste");
             respuesta.put("mensaje", "Esta entrada no existe.");
@@ -136,6 +180,54 @@ public class ValidadorApiController {
 
         public void setIdEvento(Long idEvento) {
             this.idEvento = idEvento;
+        }
+    }
+
+    public static class EventoAsignadoResponse {
+        private Long id;
+        private String nombre;
+        private String ubicacion;
+        private LocalDateTime fechaInicio;
+        private LocalDateTime fechaFin;
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public void setNombre(String nombre) {
+            this.nombre = nombre;
+        }
+
+        public String getUbicacion() {
+            return ubicacion;
+        }
+
+        public void setUbicacion(String ubicacion) {
+            this.ubicacion = ubicacion;
+        }
+
+        public LocalDateTime getFechaInicio() {
+            return fechaInicio;
+        }
+
+        public void setFechaInicio(LocalDateTime fechaInicio) {
+            this.fechaInicio = fechaInicio;
+        }
+
+        public LocalDateTime getFechaFin() {
+            return fechaFin;
+        }
+
+        public void setFechaFin(LocalDateTime fechaFin) {
+            this.fechaFin = fechaFin;
         }
     }
 }
