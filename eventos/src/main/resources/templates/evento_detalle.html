@@ -28,17 +28,16 @@
                 <p th:text="${evento.descripcion}" style="white-space: pre-line;">Descripción larga del evento.</p>
             </div>
 
-            <!-- Alertas de mensajes -->
             <div th:if="${param.ok}" style="background-color: var(--success-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
                 ¡Reserva realizada correctamente! Te esperamos en el evento.
             </div>
-            <div th:if="${param.error == 'no-publicado'}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+            <div th:if="${param.error != null and #lists.contains(param.error, 'no-publicado')}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
                 Este evento no está publicado y no se puede reservar.
             </div>
-            <div th:if="${param.error == 'yareservado'}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+            <div th:if="${param.error != null and #lists.contains(param.error, 'yareservado')}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
                 Ya tienes una reserva activa para este evento.
             </div>
-            <div th:if="${param.error == 'aforo-completo'}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+            <div th:if="${param.error != null and #lists.contains(param.error, 'aforo-completo')}" style="background-color: var(--danger-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
                 Lo sentimos, el aforo para este evento está completo.
             </div>
 
