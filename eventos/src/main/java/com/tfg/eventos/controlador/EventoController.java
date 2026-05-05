@@ -77,18 +77,20 @@ public class EventoController {
             return "redirect:/eventos/" + id + "?error=no-publicado";
         }
         Usuario usuarioReal = usuarioExiste.get();
-        Optional<Asistente> asistenteDuplicado = asistenteService.obtenerPorUsuarioYEvento(usuarioReal, eventoReal);
-        if (asistenteDuplicado.isPresent()){
+        if (entradaService.existeEntradaActivaPorUsuarioYEvento(usuarioReal, eventoReal)) {
             return "redirect:/eventos/" + id + "?error=yareservado";
         }
+
         int asistentesActuales = asistenteService.obtenerPorEvento(eventoReal).size();
         if (asistentesActuales >= eventoReal.getCapacidad()){
             return "redirect:/eventos/" + id + "?error=aforo-completo";
         }
-        Asistente asistenteNuevo = new Asistente(usuarioReal, eventoReal);
-        asistenteService.guardar(asistenteNuevo);
-        String qr_token = UUID.randomUUID().toString();
-        Entrada entradaNueva = new Entrada(qr_token, EstadoEntrada.ACTIVA, EstadoPago.PENDIENTE, LocalDateTime.now(), asistenteNuevo);
+
+        Optional<Asistente> asistenteExistente = asistenteService.obtenerPorUsuarioYEvento(usuarioReal, eventoReal);
+        Asistente asistenteReserva = asistenteExistente.orElseGet(() -> asistenteService.guardar(new Asistente(usuarioReal, eventoReal)));
+
+        String qrToken = UUID.randomUUID().toString();
+        Entrada entradaNueva = new Entrada(qrToken, EstadoEntrada.ACTIVA, EstadoPago.PENDIENTE, LocalDateTime.now(), asistenteReserva);
         entradaService.guardar(entradaNueva);
         return "redirect:/eventos/" + id + "?ok=reservada";
     }
