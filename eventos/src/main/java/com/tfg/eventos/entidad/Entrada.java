@@ -1,4 +1,5 @@
 package com.tfg.eventos.entidad;
+
 import jakarta.persistence.*;
 import com.tfg.eventos.entidad.enums.EstadoEntrada;
 import com.tfg.eventos.entidad.enums.EstadoPago;
@@ -17,8 +18,8 @@ public class Entrada {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String qr_token;
+    @Column(name = "qr_token", nullable = false, unique = true)
+    private String qrToken;
 
     @Enumerated(EnumType.STRING)
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
@@ -46,9 +47,9 @@ public class Entrada {
     public Entrada() {
     }
 
-    public Entrada(String qr_token, EstadoEntrada estado, EstadoPago estado_pago,
+    public Entrada(String qrToken, EstadoEntrada estado, EstadoPago estado_pago,
                    LocalDateTime comprada_en, Asistente asistente) {
-        this.qr_token = qr_token;
+        this.qrToken = qrToken;
         this.estado = estado;
         this.estado_pago = estado_pago;
         this.comprada_en = comprada_en;
@@ -64,11 +65,11 @@ public class Entrada {
     }
 
     public String getQrToken() {
-        return qr_token;
+        return qrToken;
     }
 
-    public void setQrToken(String qr_token) {
-        this.qr_token = qr_token;
+    public void setQrToken(String qrToken) {
+        this.qrToken = qrToken;
     }
 
     public EstadoEntrada getEstado() {
