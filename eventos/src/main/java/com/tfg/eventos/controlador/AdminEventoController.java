@@ -225,6 +225,10 @@ public class AdminEventoController{
     }
 
     private String guardarImagenEvento(MultipartFile imagenFile) {
-        return supabaseStorageService.subirImagen(imagenFile);
-    }
+        try {
+            return supabaseStorageService.subirImagen(imagenFile);
+        } catch (Exception e) {
+            return null;
+        }
+    }    
 }
