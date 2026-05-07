@@ -26,7 +26,6 @@
                 <thead>
                     <tr>
                         <th>Evento</th>
-                        <th>Token</th>
                         <th>Estado</th>
                         <th>Pago</th>
                         <th>Comprada</th>
@@ -36,7 +35,6 @@
                 <tbody>
                     <tr th:each="entrada : ${entradas}">
                         <td th:text="${entrada.asistente.evento.nombre}">Nombre evento</td>
-                        <td th:text="${entrada.qrToken}">Token entrada</td>
                         <td th:text="${entrada.estado}">Estado</td>
                         <td th:text="${entrada.estadoPago}">Estado pago</td>
                         <td th:text="${#temporals.format(entrada.compradaEn, 'dd/MM/yyyy HH:mm')}">Comprada en</td>

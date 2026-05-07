@@ -18,4 +18,7 @@ public interface ServicioApi {
     @GET("api/validador/eventos")
     Call<List<EventoAsignado>> obtenerEventosAsignados();
 
+    @POST("api/validador/validar")
+    Call<ValidacionResponse> validarEntrada(@Body ValidacionRequest request);
+
 }

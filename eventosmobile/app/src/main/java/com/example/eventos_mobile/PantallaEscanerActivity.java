@@ -1,15 +1,27 @@
 package com.example.eventos_mobile;
 
 import android.os.Bundle;
-import android.widget.*;
+import android.graphics.Color;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class PantallaEscanerActivity extends AppCompatActivity {
 
     private TextView textoEvento;
+    private TextView textoResultado;
     private Button botonAbrirCamara;
+    private Long idEvento;
+    private ServicioApi servicioApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,8 +29,12 @@ public class PantallaEscanerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_escaner);
 
         textoEvento = findViewById(R.id.tvEventoSeleccionado);
+        textoResultado = findViewById(R.id.tvResultado);
         botonAbrirCamara = findViewById(R.id.btnAbrirCamara);
 
+        servicioApi = ClienteRetrofit.obtenerServicio();
+
+        idEvento = getIntent().getLongExtra("idEvento", -1L);
         String nombreEvento = getIntent().getStringExtra("nombreEvento");
         textoEvento.setText("Evento: " + (nombreEvento != null ? nombreEvento : ""));
 
@@ -37,14 +53,50 @@ public class PantallaEscanerActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
         IntentResult resultado = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (resultado != null) {
-            String textoLeido = resultado.getContents();
-            if (textoLeido == null) {
+            String tokenLeido = resultado.getContents();
+            if (tokenLeido == null || tokenLeido.isEmpty()) {
                 Toast.makeText(this, "Escaneo cancelado", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "QR leído: " + textoLeido, Toast.LENGTH_SHORT).show();
+                validarQr(tokenLeido);
             }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void validarQr(String qrToken) {
+        if (idEvento == null || idEvento <= 0) {
+            textoResultado.setText("Error: evento no seleccionado");
+            textoResultado.setTextColor(Color.RED);
+            return;
+        }
+
+        ValidacionRequest request = new ValidacionRequest(qrToken, idEvento);
+
+        servicioApi.validarEntrada(request).enqueue(new Callback<ValidacionResponse>() {
+            @Override
+            public void onResponse(Call<ValidacionResponse> call, Response<ValidacionResponse> response) {
+                if (!response.isSuccessful() || response.body() == null) {
+                    textoResultado.setText("Error al validar (" + response.code() + ")");
+                    textoResultado.setTextColor(Color.RED);
+                    return;
+                }
+
+                ValidacionResponse r = response.body();
+                if ("valida".equalsIgnoreCase(r.getEstado())) {
+                    textoResultado.setText("VALIDA: " + r.getMensaje());
+                    textoResultado.setTextColor(Color.parseColor("#2E7D32"));
+                } else {
+                    textoResultado.setText("NO VÁLIDA: " + r.getMensaje());
+                    textoResultado.setTextColor(Color.RED);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ValidacionResponse> call, Throwable t) {
+                textoResultado.setText("Error de red: " + t.getMessage());
+                textoResultado.setTextColor(Color.RED);
+            }
+        });
     }
 }
