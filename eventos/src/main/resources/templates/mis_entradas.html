@@ -30,6 +30,7 @@
                         <th>Estado</th>
                         <th>Pago</th>
                         <th>Comprada</th>
+                        <th>QR</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,6 +40,9 @@
                         <td th:text="${entrada.estado}">Estado</td>
                         <td th:text="${entrada.estadoPago}">Estado pago</td>
                         <td th:text="${#temporals.format(entrada.compradaEn, 'dd/MM/yyyy HH:mm')}">Comprada en</td>
+                        <td>
+                            <a th:href="@{/entradas/{id}/qr(id=${entrada.id})}" class="btn btn-outline">Ver QR</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>

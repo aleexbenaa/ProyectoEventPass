@@ -4,27 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tfg.eventos.entidad.Asistente;
 import com.tfg.eventos.entidad.Entrada;
 import com.tfg.eventos.entidad.Usuario;
 import com.tfg.eventos.servicio.AsistenteService;
 import com.tfg.eventos.servicio.EntradaService;
+import com.tfg.eventos.servicio.QrService;
 import com.tfg.eventos.servicio.UsuarioService;
 
 @Controller
 public class UsuarioController {
+    private final QrService qrService;
     private final UsuarioService usuarioService;
     private final AsistenteService asistenteService;
     private final EntradaService entradaService;
-    public UsuarioController(UsuarioService usuarioService, AsistenteService asistenteService, EntradaService entradaService){
+    public UsuarioController(UsuarioService usuarioService, AsistenteService asistenteService, EntradaService entradaService, QrService qrService){
         this.usuarioService = usuarioService;
         this.asistenteService = asistenteService;
         this.entradaService = entradaService;
+        this.qrService = qrService;
     }
     @GetMapping("/mis_entradas")
     public String obtenerEntradas(Model model, Authentication authentication){
@@ -49,4 +55,13 @@ public class UsuarioController {
         model.addAttribute("entradas", entradas);
         return "mis_entradas";
         }
+
+    @GetMapping(value="/entradas/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
+    @ResponseBody
+    public byte[] verQr(@PathVariable Long id, Authentication auth) {
+        Entrada entrada = entradaService.obtenerPorId(id).orElseThrow();
+        // opcional: validar que la entrada pertenece al usuario logueado
+        return qrService.generarPng(entrada.getQrToken(), 320, 320);
+     }
+        
     }
