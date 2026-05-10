@@ -2,17 +2,20 @@ package com.tfg.eventos.controlador;
 
 import com.tfg.eventos.servicio.UsuarioService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.tfg.eventos.entidad.Asistente;
 import com.tfg.eventos.entidad.Entrada;
@@ -21,6 +24,7 @@ import com.tfg.eventos.entidad.Usuario;
 import com.tfg.eventos.entidad.enums.EstadoEntrada;
 import com.tfg.eventos.entidad.enums.EstadoEvento;
 import com.tfg.eventos.entidad.enums.EstadoPago;
+import com.tfg.eventos.entidad.enums.TipoEvento;
 import com.tfg.eventos.servicio.AsistenteService;
 import com.tfg.eventos.servicio.EntradaService;
 import com.tfg.eventos.servicio.EventoService;
@@ -51,6 +55,36 @@ public class EventoController {
         }
         model.addAttribute("eventos", publicados);
         return "eventos_lista";
+    }
+
+    @GetMapping("/busqueda")
+    public String buscarEventos(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) TipoEvento tipo,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
+            @RequestParam(required = false) String ciudad,
+            Model model) {
+
+        boolean busquedaRealizada = (nombre != null && !nombre.isBlank())
+                || tipo != null
+                || fechaDesde != null
+                || fechaHasta != null
+                || (ciudad != null && !ciudad.isBlank());
+
+        List<Evento> resultados = busquedaRealizada
+                ? eventoService.buscar(nombre, tipo, fechaDesde, fechaHasta, ciudad)
+                : new ArrayList<>();
+
+        model.addAttribute("resultados", resultados);
+        model.addAttribute("busquedaRealizada", busquedaRealizada);
+        model.addAttribute("tiposEvento", TipoEvento.values());
+        model.addAttribute("nombre", nombre);
+        model.addAttribute("tipo", tipo);
+        model.addAttribute("fechaDesde", fechaDesde);
+        model.addAttribute("fechaHasta", fechaHasta);
+        model.addAttribute("ciudad", ciudad);
+        return "busqueda";
     }
     @GetMapping("/eventos/{id}")
     public String mostrarEvento(@PathVariable Long id, Model model){

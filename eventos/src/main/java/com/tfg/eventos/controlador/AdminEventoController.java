@@ -136,6 +136,7 @@ public class AdminEventoController{
         eventoExistente.setFechaInicio(eventoEditado.getFechaInicio());
         eventoExistente.setFechaFin(eventoEditado.getFechaFin());
         eventoExistente.setCapacidad(eventoEditado.getCapacidad());
+        eventoExistente.setTipo(eventoEditado.getTipo());
         eventoExistente.setValidadores(usuarioService.obtenerValidadoresPorIds(validadoresIds));
         String imagenSubida = guardarImagenEvento(imagenFile);
         if (imagenSubida != null) {
@@ -164,6 +165,26 @@ public class AdminEventoController{
         }
 
         evento.setEstado(EstadoEvento.PUBLICADO);
+        eventoService.guardar(evento);
+        return "redirect:/admin/eventos";
+    }
+
+    @PostMapping("/admin/eventos/{id}/ocultar")
+    public String ocultarEvento(@PathVariable Long id, Authentication authentication) {
+        Optional<Evento> eventoBuscado = eventoService.obtenerPorId(id);
+        if (eventoBuscado.isEmpty()) {
+            return "noexiste";
+        }
+        Optional<Usuario> usuarioLogueado = usuarioService.obtenerPorEmail(authentication.getName());
+        if (usuarioLogueado.isEmpty()) {
+            return "noexiste";
+        }
+        Evento evento = eventoBuscado.get();
+        Usuario admin = usuarioLogueado.get();
+        if (!admin.getId().equals(evento.getOrganizador().getId())) {
+            return "noexiste";
+        }
+        evento.setEstado(EstadoEvento.PLANIFICADO);
         eventoService.guardar(evento);
         return "redirect:/admin/eventos";
     }
