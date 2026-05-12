@@ -21,4 +21,7 @@ public interface ServicioApi {
     @POST("api/validador/validar")
     Call<ValidacionResponse> validarEntrada(@Body ValidacionRequest request);
 
+    @GET("api/cliente/entradas")
+    Call<List<EntradaCliente>> obtenerMisEntradas();
+
 }

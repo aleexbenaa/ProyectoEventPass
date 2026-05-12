@@ -48,4 +48,8 @@ public class ClienteRetrofit {
 
         return retrofit.create(ServicioApi.class);
     }
+    public static String obtenerBaseUrl() {
+        return URL_BASE;
+    }
+
 }

@@ -13,6 +13,12 @@
         android:label="EventPass Validador"
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
         <activity
+            android:name=".PantallaQrActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PantallaClienteActivity"
+            android:exported="false" />
+        <activity
             android:name=".PantallaEscanerActivity"
             android:exported="false" />
         <activity
