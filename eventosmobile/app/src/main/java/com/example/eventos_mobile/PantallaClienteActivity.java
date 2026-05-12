@@ -26,17 +26,17 @@ public class PantallaClienteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pantalla_cliente);
+        setContentView(R.layout.activity_pantalla_cliente); // Carga el layout
 
         listaEntradas = findViewById(R.id.listaEntradasCliente);
         servicioApi = ClienteRetrofit.obtenerServicio();
-
+        // Asignamos el adaptador
         adaptador = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, textos);
         listaEntradas.setAdapter(adaptador);
 
         listaEntradas.setOnItemClickListener((parent, view, position, id) -> {
             EntradaCliente entrada = entradas.get(position);
-
+            // Al pulsar en una entrada mostramos QR
             Intent intent = new Intent(PantallaClienteActivity.this, PantallaQrActivity.class);
             intent.putExtra("entradaId", entrada.getId());
             startActivity(intent);

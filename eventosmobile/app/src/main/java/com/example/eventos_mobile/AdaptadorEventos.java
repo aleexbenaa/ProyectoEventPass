@@ -22,13 +22,13 @@ public class AdaptadorEventos extends RecyclerView.Adapter<AdaptadorEventos.Vist
     }
 
     @NonNull
-    @Override
+    @Override // Le decimos como mostrar la información mediante el item_evento
     public VistaEvento onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View vista = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_evento, parent, false);
         return new VistaEvento(vista);
     }
 
-    @Override
+    @Override // Relacionamos la información mostrada con los datos reales
     public void onBindViewHolder(@NonNull VistaEvento holder, int position) {
         EventoAsignado evento = eventos.get(position);
         holder.textoNombre.setText(evento.getNombre());

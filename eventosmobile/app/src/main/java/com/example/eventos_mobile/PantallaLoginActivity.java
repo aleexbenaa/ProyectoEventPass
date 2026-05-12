@@ -56,6 +56,8 @@ public class PantallaLoginActivity extends AppCompatActivity {
             }
         });
     }
+
+    // Decide a que pantalla debe ir el usuario según su tipo
     private void comprobarTipoUsuario() {
         servicioApi.obtenerEventosAsignados().enqueue(new retrofit2.Callback<java.util.List<EventoAsignado>>() {
             @Override
