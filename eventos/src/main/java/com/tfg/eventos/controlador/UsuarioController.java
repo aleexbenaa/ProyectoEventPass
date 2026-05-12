@@ -3,14 +3,16 @@ package com.tfg.eventos.controlador;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.tfg.eventos.entidad.Asistente;
 import com.tfg.eventos.entidad.Entrada;
@@ -64,4 +66,38 @@ public class UsuarioController {
         return qrService.generarPng(entrada.getQrToken(), 320, 320);
      }
         
+
+    @GetMapping("/api/cliente/entradas")
+    @ResponseBody
+    public List<Map<String, Object>> obtenerEntradasApi(Authentication authentication) {
+        String emailLogueado = authentication.getName();
+        Optional<Usuario> usuario = usuarioService.obtenerPorEmail(emailLogueado);
+
+        List<Map<String, Object>> resultado = new ArrayList<>();
+
+        if (usuario.isEmpty()) {
+            return resultado;
+        }
+
+        Usuario usuarioReal = usuario.get();
+        List<Asistente> asistentes = asistenteService.obtenerTodos();
+
+        for (Asistente asistente : asistentes) {
+            if (asistente.getUsuario().getId().equals(usuarioReal.getId())) {
+                List<Entrada> entradasAsistente = entradaService.obtenerPorAsistente(asistente);
+
+                for (Entrada entrada : entradasAsistente) {
+                    Map<String, Object> fila = new HashMap<>();
+                    fila.put("id", entrada.getId());
+                    fila.put("nombreEvento", entrada.getAsistente().getEvento().getNombre());
+                    fila.put("estado", entrada.getEstado().name());
+                    fila.put("estadoPago", entrada.getEstadoPago().name());
+                    fila.put("compradaEn", entrada.getCompradaEn());
+                    resultado.add(fila);
+                }
+            }
+        }
+
+        return resultado;
     }
+}
