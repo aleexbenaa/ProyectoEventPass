@@ -1,6 +1,7 @@
 package com.tfg.eventos.entidad;
 import jakarta.persistence.*;
 import com.tfg.eventos.entidad.enums.EstadoEvento;
+import com.tfg.eventos.entidad.enums.TipoEvento;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
@@ -41,6 +42,11 @@ public class Evento {
     @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(nullable = false, columnDefinition = "estado_evento")
     private EstadoEvento estado;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    @Column(columnDefinition = "tipo_evento")
+    private TipoEvento tipo;
 
     @Column(nullable = false)
     private LocalDateTime creado_en;
@@ -146,6 +152,14 @@ public class Evento {
 
     public void setEstado(EstadoEvento estado) {
         this.estado = estado;
+    }
+
+    public TipoEvento getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoEvento tipo) {
+        this.tipo = tipo;
     }
 
     public LocalDateTime getCreadoEn() {

@@ -23,6 +23,7 @@ public class SeguridadConfig {
                     "/public/**",
                     "/eventos",
                     "/eventos/*",
+                    "/busqueda",
                     "/css/**",
                     "/js/**",
                     "/images/**",

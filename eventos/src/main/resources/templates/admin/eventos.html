@@ -44,16 +44,24 @@
                                   th:style="${evento.estado.name() == 'PUBLICADO'} ? 'color: var(--success-color); font-weight: bold;' : 'color: var(--text-light);'">Estado</span>
                         </td>
                         <td class="actions-cell">
-                            <form th:if="${evento.estado.name() != 'PUBLICADO'}"
-                                  th:action="@{/admin/eventos/{id}/publicar(id=${evento.id})}"
-                                  method="post"
-                                  style="display: inline; margin-right: 0.35rem;">
-                                <button type="submit" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Publicar</button>
-                            </form>
-                            <a th:href="@{/admin/eventos/{id}/editar(id=${evento.id})}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Editar</a>
-                            <form th:action="@{/admin/eventos/{id}/eliminar(id=${evento.id})}" method="post" style="display: inline;">
-                                <button type="submit" class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="return confirm('¿Seguro que deseas eliminar este evento?');">Eliminar</button>
-                            </form>
+                            <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                <form th:if="${evento.estado.name() != 'PUBLICADO'}"
+                                      th:action="@{/admin/eventos/{id}/publicar(id=${evento.id})}"
+                                      method="post">
+                                    <button type="submit" class="btn btn-primary" style="width: 85px; font-size: 0.85rem; padding: 0.4rem 0; box-sizing: border-box; border: 1px solid transparent;">Publicar</button>
+                                </form>
+                                <form th:if="${evento.estado.name() == 'PUBLICADO'}"
+                                      th:action="@{/admin/eventos/{id}/ocultar(id=${evento.id})}"
+                                      method="post">
+                                    <button type="submit" class="btn btn-gris" style="width: 85px; font-size: 0.85rem; padding: 0.4rem 0; box-sizing: border-box;">Ocultar</button>
+                                </form>
+                                <form th:action="@{/admin/eventos/{id}/editar(id=${evento.id})}" method="get">
+                                    <button type="submit" class="btn btn-outline" style="width: 85px; font-size: 0.85rem; padding: 0.4rem 0; box-sizing: border-box;">Editar</button>
+                                </form>
+                                <form th:action="@{/admin/eventos/{id}/eliminar(id=${evento.id})}" method="post">
+                                    <button type="submit" class="btn btn-danger" style="width: 85px; font-size: 0.85rem; padding: 0.4rem 0; box-sizing: border-box; border: 1px solid transparent;" onclick="return confirm('¿Seguro que deseas eliminar este evento?');">Eliminar</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
