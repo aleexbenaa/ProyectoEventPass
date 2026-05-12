@@ -29,7 +29,13 @@ public class SeguridadConfig {
                     "/images/**",
                     "/uploads/**",
                     "/webjars/**",
-                    "/favicon.ico"
+                    "/favicon.ico",
+                    "/*.png",
+                    "/*.jpg",
+                    "/*.jpeg",
+                    "/*.gif",
+                    "/*.webp",
+                    "/*.svg"
                 ).permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/validador/**").hasRole("VALIDADOR")

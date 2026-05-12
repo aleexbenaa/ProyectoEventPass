@@ -1,5 +1,5 @@
 package com.tfg.eventos.entidad.enums;
 
 public enum TipoEvento {
-    CONCIERTO, TEATRO, MUSICAL, DEPORTIVO, ESPECTACULO, OTRO
+    CONCIERTO, TEATRO, MUSICAL, DEPORTIVO, ESPECTACULO, INFANTIL, CINE, OTRO
 }
