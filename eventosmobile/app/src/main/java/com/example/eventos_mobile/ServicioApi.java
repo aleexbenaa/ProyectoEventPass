@@ -24,4 +24,7 @@ public interface ServicioApi {
     @GET("api/cliente/entradas")
     Call<List<EntradaCliente>> obtenerMisEntradas();
 
+    @GET("entradas/{id}/qr")
+    Call<ResponseBody> obtenerQr(@Path("id") Long entradaId);
+
 }
