@@ -9,10 +9,12 @@ public class InicioController {
 
     @GetMapping("/")
     public String inicio(Authentication authentication) {
+        // Si no hay sesión, se redirige a la lista pública de eventos
         if (authentication == null) {
             return "redirect:/eventos";
         }
 
+        // Si es admin, se le manda directamente al panel de gestión
         if (authentication.getAuthorities().toString().contains("ROLE_ADMIN")) {
             return "redirect:/admin/eventos";
         }

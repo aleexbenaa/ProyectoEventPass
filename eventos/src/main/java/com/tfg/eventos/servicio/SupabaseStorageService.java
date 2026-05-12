@@ -28,16 +28,19 @@ public class SupabaseStorageService {
             return null;
         }
 
+        // Se conserva la extensión para que la imagen se guarde correctamente
         String extension = "";
         String originalName = archivo.getOriginalFilename();
         if (originalName != null && originalName.contains(".")) {
             extension = originalName.substring(originalName.lastIndexOf('.'));
         }
 
+        // Se genera un nombre único para evitar colisiones en el bucket
         String nombreArchivo = UUID.randomUUID() + extension;
         String uploadUrl = supabaseUrl + "/storage/v1/object/" + bucket + "/" + nombreArchivo;
 
         try {
+            // Se sube el archivo al bucket de Supabase Storage
             restClient.post()
                     .uri(uploadUrl)
                     .header("Authorization", "Bearer " + serviceRoleKey)
@@ -48,6 +51,7 @@ public class SupabaseStorageService {
                     .retrieve()
                     .toBodilessEntity();
 
+            // Devuelve la URL pública que luego se guardará en el evento
             return supabaseUrl + "/storage/v1/object/public/" + bucket + "/" + nombreArchivo;
 
         } catch (IOException e) {

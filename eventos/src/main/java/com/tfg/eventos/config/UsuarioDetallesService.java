@@ -21,10 +21,12 @@ public class UsuarioDetallesService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // Busca el usuario por email para que Spring Security pueda autenticarlo
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
 
         String authority = "ROLE_" + usuario.getRol().name();
+        // Se construye el usuario de Spring Security con su rol correspondiente
         return new org.springframework.security.core.userdetails.User(
                 usuario.getEmail(),
                 usuario.getContrasenaCifrada(),

@@ -19,6 +19,7 @@ public class Entrada {
     private Long id;
 
     @Column(name = "qr_token", nullable = false, unique = true)
+    // Token único que después se usa para generar y validar el QR
     private String qrToken;
 
     @Enumerated(EnumType.STRING)

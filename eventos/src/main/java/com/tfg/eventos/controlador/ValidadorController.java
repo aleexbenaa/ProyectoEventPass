@@ -23,6 +23,7 @@ public class ValidadorController {
     }
     @PostMapping("/validador/validar")
     public String validarEntrada(@RequestParam String qrToken) {
+        // Busca la entrada a partir del token QR leído
         Optional<Entrada> entrada = entradaService.obtenerPorQrToken(qrToken);
         if (entrada.isEmpty()){
             return "redirect:/validador?error=noexiste";
@@ -34,9 +35,11 @@ public class ValidadorController {
         if (entradaObtenida.getEstado() == EstadoEntrada.CANCELADA){
             return "redirect:/validador?error=cancelada";
         }
+        // Si todo es correcto, la entrada pasa a estado USADA
         entradaObtenida.setEstado(EstadoEntrada.USADA);
         entradaObtenida.setUsadaEn(LocalDateTime.now());
         entradaService.guardar(entradaObtenida);
+        // También se guarda un registro del acceso realizado
         RegistroAcceso registro = new RegistroAcceso();
         registro.setEntrada(entradaObtenida);
         registro.setFechaAcceso(LocalDateTime.now());

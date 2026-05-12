@@ -64,6 +64,7 @@ public class Evento {
             joinColumns = @JoinColumn(name = "id_evento"),
             inverseJoinColumns = @JoinColumn(name = "id_validador")
     )
+    // Lista de validadores asignados al evento
     private List<Usuario> validadores;
 
     public Evento() {

@@ -14,8 +14,10 @@ import com.google.zxing.common.BitMatrix;
 public class QrService {
   public byte[] generarPng(String texto, int w, int h) {
     try {
+      // Genera una matriz QR a partir del texto recibido
       BitMatrix matrix = new MultiFormatWriter().encode(texto, BarcodeFormat.QR_CODE, w, h);
       ByteArrayOutputStream out = new ByteArrayOutputStream();
+      // Convierte la matriz en una imagen PNG
       MatrixToImageWriter.writeToStream(matrix, "PNG", out);
       return out.toByteArray();
     } catch (Exception e) {

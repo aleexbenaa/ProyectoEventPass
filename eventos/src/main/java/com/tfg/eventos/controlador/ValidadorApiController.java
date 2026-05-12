@@ -57,6 +57,7 @@ public class ValidadorApiController {
         }
 
         List<Evento> eventos = eventoService.obtenerTodos();
+        // Solo se devuelven los eventos donde el usuario actúa como validador
         for (Evento evento : eventos) {
             if (evento.getValidadores() == null) {
                 continue;
@@ -88,6 +89,7 @@ public class ValidadorApiController {
     public Map<String, String> validarEntradaApi(@RequestBody ValidacionRequest request, Authentication authentication) {
         Map<String, String> respuesta = new HashMap<>();
 
+        // Se comprueba primero que vengan los datos mínimos para validar
         if (request == null || request.getQrToken() == null || request.getQrToken().isBlank() || request.getIdEvento() == null) {
             respuesta.put("estado", "datosinvalidos");
             respuesta.put("mensaje", "Faltan datos para validar.");
@@ -110,6 +112,7 @@ public class ValidadorApiController {
 
         Evento evento = eventoSeleccionado.get();
         boolean validadorAsignado = false;
+        // El validador solo puede validar entradas de los eventos asignados
         if (evento.getValidadores() != null) {
             for (Usuario validador : evento.getValidadores()) {
                 if (validador.getId().equals(validadorLogueado.get().getId())) {
@@ -149,9 +152,11 @@ public class ValidadorApiController {
             respuesta.put("mensaje", "La entrada ha sido cancelada.");
             return respuesta;
         }
+        // Si pasa todas las comprobaciones, la entrada se marca como usada
         entradaObtenida.setEstado(EstadoEntrada.USADA);
         entradaObtenida.setUsadaEn(LocalDateTime.now());
         entradaService.guardar(entradaObtenida);
+        // Se registra el acceso para dejar trazabilidad en base de datos
         RegistroAcceso registro = new RegistroAcceso();
         registro.setEntrada(entradaObtenida);
         registro.setFechaAcceso(LocalDateTime.now());

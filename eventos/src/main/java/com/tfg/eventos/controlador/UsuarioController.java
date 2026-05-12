@@ -44,12 +44,14 @@ public class UsuarioController {
         Usuario usuarioReal = usuario.get();
         List<Asistente> asistentes = asistenteService.obtenerTodos();
         List<Asistente> asistentesUsuario = new ArrayList<>();
+        // Se buscan las relaciones asistente del usuario logueado
         for (Asistente asistente : asistentes){
             if (asistente.getUsuario().getId() == usuarioReal.getId()){
                 asistentesUsuario.add(asistente);
             }
         }
         List<Entrada> entradas = new ArrayList<>();
+        // A partir de cada asistente se obtienen sus entradas
         for (Asistente as : asistentesUsuario){
             List<Entrada> entradasAsistente = entradaService.obtenerPorAsistente(as);
             entradas.addAll(entradasAsistente);
@@ -62,7 +64,7 @@ public class UsuarioController {
     @ResponseBody
     public byte[] verQr(@PathVariable Long id, Authentication auth) {
         Entrada entrada = entradaService.obtenerPorId(id).orElseThrow();
-        // opcional: validar que la entrada pertenece al usuario logueado
+        // Genera y devuelve la imagen PNG del código QR de la entrada
         return qrService.generarPng(entrada.getQrToken(), 320, 320);
      }
         
@@ -82,6 +84,7 @@ public class UsuarioController {
         Usuario usuarioReal = usuario.get();
         List<Asistente> asistentes = asistenteService.obtenerTodos();
 
+        // Se prepara una respuesta simple para la app móvil
         for (Asistente asistente : asistentes) {
             if (asistente.getUsuario().getId().equals(usuarioReal.getId())) {
                 List<Entrada> entradasAsistente = entradaService.obtenerPorAsistente(asistente);
