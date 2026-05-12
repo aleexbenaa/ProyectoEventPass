@@ -26,11 +26,13 @@ public class AuthController {
 
     @GetMapping("/login")
     public String login(){
+        // Muestra el formulario de inicio de sesión
         return "login";
     }
 
     @GetMapping("/register")
     public String register(){
+        // Muestra el formulario de registro
         return "register";
     }
 
@@ -50,11 +52,13 @@ public class AuthController {
             return "redirect:/register?error=email";
         }
 
+        // Por defecto un usuario nuevo se registra como usuario normal
         RolUsuario rolAsignado = RolUsuario.USUARIO;
         if ("ADMIN".equalsIgnoreCase(rol)) {
             rolAsignado = RolUsuario.ADMIN;
         }
 
+        // Antes de guardar, la contraseña se cifra con BCrypt
         Usuario usuario = new Usuario();
         usuario.setNombre(nombre);
         usuario.setEmail(emailNormalizado);

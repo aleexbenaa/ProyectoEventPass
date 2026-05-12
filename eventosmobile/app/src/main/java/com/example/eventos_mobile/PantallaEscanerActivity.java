@@ -31,13 +31,13 @@ public class PantallaEscanerActivity extends AppCompatActivity {
         textoEvento = findViewById(R.id.tvEventoSeleccionado);
         textoResultado = findViewById(R.id.tvResultado);
         botonAbrirCamara = findViewById(R.id.btnAbrirCamara);
-
+        // Servicio retrofit para comunicarnos con el backend
         servicioApi = ClienteRetrofit.obtenerServicio();
-
+        // Obtenemos el evento que el validador elige
         idEvento = getIntent().getLongExtra("idEvento", -1L);
         String nombreEvento = getIntent().getStringExtra("nombreEvento");
         textoEvento.setText("Evento: " + (nombreEvento != null ? nombreEvento : ""));
-
+        // Abrimos la camara al pulsar el boton
         botonAbrirCamara.setOnClickListener(v -> abrirEscaner());
     }
 
@@ -51,13 +51,14 @@ public class PantallaEscanerActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
+        // Recoge el resultado del escaneo
         IntentResult resultado = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (resultado != null) {
             String tokenLeido = resultado.getContents();
             if (tokenLeido == null || tokenLeido.isEmpty()) {
                 Toast.makeText(this, "Escaneo cancelado", Toast.LENGTH_SHORT).show();
             } else {
-                validarQr(tokenLeido);
+                validarQr(tokenLeido); // Enviamos token al backend
             }
             return;
         }
@@ -70,7 +71,7 @@ public class PantallaEscanerActivity extends AppCompatActivity {
             textoResultado.setTextColor(Color.RED);
             return;
         }
-
+        // Creamos el objeto con los datos necesaros
         ValidacionRequest request = new ValidacionRequest(qrToken, idEvento);
 
         servicioApi.validarEntrada(request).enqueue(new Callback<ValidacionResponse>() {
@@ -81,7 +82,7 @@ public class PantallaEscanerActivity extends AppCompatActivity {
                     textoResultado.setTextColor(Color.RED);
                     return;
                 }
-
+                // Si la entrada es válida lo mostramos
                 ValidacionResponse r = response.body();
                 if ("valida".equalsIgnoreCase(r.getEstado())) {
                     textoResultado.setText("VALIDA: " + r.getMensaje());

@@ -40,6 +40,7 @@ public class Usuario {
     private List<Asistente> asistentes;
 
     @ManyToMany(mappedBy = "validadores")
+    // Eventos donde el usuario participa como validador
     private List<Evento> eventosAsignados;
 
     public Usuario() {

@@ -48,6 +48,7 @@ public class EventoController {
     public String listarEventos(Model model){
         List<Evento> todos = eventoService.obtenerTodos();
         List<Evento> publicados = new ArrayList<>();
+        // Solo se muestran en la web pública los eventos publicados
         for (Evento evento : todos){
             if (evento.getEstado() == EstadoEvento.PUBLICADO){
                 publicados.add(evento);
@@ -66,6 +67,7 @@ public class EventoController {
             @RequestParam(required = false) String ciudad,
             Model model) {
 
+        // Solo se considera búsqueda real si se ha rellenado algún filtro
         boolean busquedaRealizada = (nombre != null && !nombre.isBlank())
                 || tipo != null
                 || fechaDesde != null
@@ -107,22 +109,27 @@ public class EventoController {
             return "noexiste";
         }
         Evento eventoReal = evento.get();
+        // No se puede reservar un evento que aún no esté publicado
         if (eventoReal.getEstado() != EstadoEvento.PUBLICADO){
             return "redirect:/eventos/" + id + "?error=no-publicado";
         }
         Usuario usuarioReal = usuarioExiste.get();
+        // Evita que un usuario reserve dos veces la misma entrada activa
         if (entradaService.existeEntradaActivaPorUsuarioYEvento(usuarioReal, eventoReal)) {
             return "redirect:/eventos/" + id + "?error=yareservado";
         }
 
+        // Se comprueba si el aforo del evento ya está completo
         int asistentesActuales = asistenteService.obtenerPorEvento(eventoReal).size();
         if (asistentesActuales >= eventoReal.getCapacidad()){
             return "redirect:/eventos/" + id + "?error=aforo-completo";
         }
 
+        // Si el usuario aún no está asociado a ese evento, se crea el asistente
         Optional<Asistente> asistenteExistente = asistenteService.obtenerPorUsuarioYEvento(usuarioReal, eventoReal);
         Asistente asistenteReserva = asistenteExistente.orElseGet(() -> asistenteService.guardar(new Asistente(usuarioReal, eventoReal)));
 
+        // Cada entrada se crea con un token QR único
         String qrToken = UUID.randomUUID().toString();
         Entrada entradaNueva = new Entrada(qrToken, EstadoEntrada.ACTIVA, EstadoPago.PENDIENTE, LocalDateTime.now(), asistenteReserva);
         entradaService.guardar(entradaNueva);

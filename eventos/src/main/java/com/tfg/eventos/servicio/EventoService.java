@@ -43,6 +43,7 @@ public class EventoService {
     }
 
     public List<Evento> buscar(String nombre, TipoEvento tipo, LocalDate fechaDesde, LocalDate fechaHasta, String ciudad) {
+        // La búsqueda aplica filtros solo sobre eventos publicados
         return eventoRepository.findAll().stream()
             .filter(e -> e.getEstado() == EstadoEvento.PUBLICADO)
             .filter(e -> nombre == null || nombre.isBlank() ||

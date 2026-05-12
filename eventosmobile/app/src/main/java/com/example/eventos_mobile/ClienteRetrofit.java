@@ -8,8 +8,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ClienteRetrofit {
-
-    // CAMBIA ESTO por tu URL de Railway
+    // Url del proyecto en la nube
     private static final String URL_BASE = "https://proyectoeventpass-production.up.railway.app/";
 
     private static Retrofit retrofit;
@@ -17,7 +16,7 @@ public class ClienteRetrofit {
     public static ServicioApi obtenerServicio() {
         if (retrofit == null) {
             android.util.Log.d("API_BASE", URL_BASE);
-
+            // Guardamos las cookies de inicio de sesión
             CookieJar gestorCookies = new CookieJar() {
                 private final Map<String, List<Cookie>> almacen = new HashMap<>();
 
@@ -45,7 +44,11 @@ public class ClienteRetrofit {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
-
+        // Devuelve un objeto ServicioApi para hacer login, eventos, entradas, validar...
         return retrofit.create(ServicioApi.class);
     }
+    public static String obtenerBaseUrl() {
+        return URL_BASE;
+    }
+
 }

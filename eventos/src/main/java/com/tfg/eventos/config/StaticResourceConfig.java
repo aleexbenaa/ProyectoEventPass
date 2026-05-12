@@ -13,6 +13,7 @@ public class StaticResourceConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         Path uploadPath = Paths.get("uploads").toAbsolutePath().normalize();
+        // Permite servir archivos subidos desde la carpeta uploads
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:" + uploadPath.toString() + "/");
     }

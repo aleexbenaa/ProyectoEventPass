@@ -53,6 +53,7 @@ public class AdminEventoController{
         if (adminLogueado.isEmpty()){
             return "noexiste";
         }
+        // Muestra solo los eventos creados por el admin logueado
         List<Evento> eventosAdmin = eventoService.obtenerPorOrganizador(adminLogueado.get());
         model.addAttribute("eventos", eventosAdmin);
         return "admin/eventos";
@@ -61,6 +62,7 @@ public class AdminEventoController{
     public String nuevoEvento(Model model){
         Evento evento = new Evento();
         model.addAttribute("evento", evento);
+        // Se cargan los validadores disponibles para poder asignarlos al evento
         model.addAttribute("validadoresDisponibles", usuarioService.obtenerValidadores());
         model.addAttribute("validadoresSeleccionadosIds", new ArrayList<Long>());
         return "admin/evento_form";
@@ -76,6 +78,7 @@ public class AdminEventoController{
         }
         Usuario administrador = admin.get();
         List<Usuario> validadores = usuarioService.obtenerValidadoresPorIds(validadoresIds);
+        // Al crear el evento se guarda también su organizador y validadores
         evento.setOrganizador(administrador);
         evento.setValidadores(validadores);
         evento.setImagenUrl(guardarImagenEvento(imagenFile));
@@ -137,6 +140,7 @@ public class AdminEventoController{
         eventoExistente.setFechaFin(eventoEditado.getFechaFin());
         eventoExistente.setCapacidad(eventoEditado.getCapacidad());
         eventoExistente.setTipo(eventoEditado.getTipo());
+        // En edición se actualizan también los validadores y la imagen si cambia
         eventoExistente.setValidadores(usuarioService.obtenerValidadoresPorIds(validadoresIds));
         String imagenSubida = guardarImagenEvento(imagenFile);
         if (imagenSubida != null) {
@@ -221,6 +225,7 @@ public class AdminEventoController{
         int entradasVendidas = 0;
         int entradasUsadas = 0;
 
+        // Se recorren los eventos del admin para calcular estadísticas del panel
         for(Evento evento : eventosAdmin){
             if (evento.getEstado() == EstadoEvento.PUBLICADO){
                 eventosPublicados++;
@@ -249,6 +254,7 @@ public class AdminEventoController{
         try {
             return supabaseStorageService.subirImagen(imagenFile);
         } catch (Exception e) {
+            // Si la subida falla, no se bloquea la creación del evento
             return null;
         }
     }    

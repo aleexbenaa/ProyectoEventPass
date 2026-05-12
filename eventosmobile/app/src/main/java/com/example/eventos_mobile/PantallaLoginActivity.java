@@ -44,18 +44,42 @@ public class PantallaLoginActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful() || response.code() == 302) {
-                    Intent irEventos = new Intent(PantallaLoginActivity.this, PantallaEventosActivity.class);
-                    startActivity(irEventos);
-                    finish();
+                    comprobarTipoUsuario();
                 } else {
                     Toast.makeText(PantallaLoginActivity.this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("LOGIN_API", "Fallo login", t);
-                Toast.makeText(PantallaLoginActivity.this, "Error: " + t.getClass().getSimpleName() + " - " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(PantallaLoginActivity.this, "Error de red", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Decide a que pantalla debe ir el usuario según su tipo
+    private void comprobarTipoUsuario() {
+        servicioApi.obtenerEventosAsignados().enqueue(new retrofit2.Callback<java.util.List<EventoAsignado>>() {
+            @Override
+            public void onResponse(retrofit2.Call<java.util.List<EventoAsignado>> call,
+                                   retrofit2.Response<java.util.List<EventoAsignado>> response) {
+
+                if (response.isSuccessful()) {
+                    Intent irValidador = new Intent(PantallaLoginActivity.this, PantallaEventosActivity.class);
+                    startActivity(irValidador);
+                    finish();
+                } else {
+                    Intent irCliente = new Intent(PantallaLoginActivity.this, PantallaClienteActivity.class);
+                    startActivity(irCliente);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<java.util.List<EventoAsignado>> call, Throwable t) {
+                Intent irCliente = new Intent(PantallaLoginActivity.this, PantallaClienteActivity.class);
+                startActivity(irCliente);
+                finish();
             }
         });
     }
