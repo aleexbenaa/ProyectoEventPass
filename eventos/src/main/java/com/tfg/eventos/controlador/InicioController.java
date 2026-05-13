@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class InicioController {
 
+    @GetMapping("/contacto")
+    public String contacto() {
+        return "contacto";
+    }
+
     @GetMapping("/")
     public String inicio(Authentication authentication) {
         // Si no hay sesión, se redirige a la lista pública de eventos

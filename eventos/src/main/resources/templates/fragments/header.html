@@ -22,6 +22,9 @@
             <a sec:authorize="isAuthenticated()" th:href="@{/mis_entradas}" class="nav-link-item">
                 <span class="nav-icon">🎫</span> Mis entradas
             </a>
+            <a th:href="@{/contacto}" class="nav-link-item">
+                <span class="nav-icon">📞</span> Contacto
+            </a>
         </nav>
 
         <!-- Acciones de usuario -->
@@ -36,10 +39,10 @@
                 Registrarse
             </a>
             <div sec:authorize="isAuthenticated()" class="nav-user-menu">
-                <div class="nav-avatar">
+                <a th:href="@{/mis_entradas}" class="nav-avatar" style="text-decoration:none;">
                     <span sec:authorize="isAuthenticated()"
                           th:text="${#authentication.name != null ? #authentication.name.substring(0,1).toUpperCase() : 'U'}">U</span>
-                </div>
+                </a>
                 <span class="nav-username" sec:authentication="name">Usuario</span>
                 <a th:href="@{/logout}" class="btn btn-danger nav-logout">Cerrar Sesión</a>
             </div>
@@ -58,6 +61,7 @@
             <a th:href="@{/eventos}">🏠 Explorar</a>
             <a th:href="@{/busqueda}">🔍 Búsqueda</a>
             <a sec:authorize="isAuthenticated()" th:href="@{/mis_entradas}">🎫 Mis entradas</a>
+            <a th:href="@{/contacto}">📞 Contacto</a>
             <hr style="border-color: #e2e8f0; margin: 0.5rem 0;">
             <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/eventos}">⚙️ Panel Admin</a>
             <a sec:authorize="isAnonymous()" th:href="@{/login}">Iniciar Sesión</a>
