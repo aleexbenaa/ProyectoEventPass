@@ -16,10 +16,11 @@ public class QrService {
     try {
       // Genera una matriz QR a partir del texto recibido
       BitMatrix matrix = new MultiFormatWriter().encode(texto, BarcodeFormat.QR_CODE, w, h);
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      // Convierte la matriz en una imagen PNG
-      MatrixToImageWriter.writeToStream(matrix, "PNG", out);
-      return out.toByteArray();
+      // Convierte la matriz en una imagen PNG y cierra el stream al terminar
+      try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        MatrixToImageWriter.writeToStream(matrix, "PNG", out);
+        return out.toByteArray();
+      }
     } catch (Exception e) {
       throw new RuntimeException("Error generando QR", e);
     }

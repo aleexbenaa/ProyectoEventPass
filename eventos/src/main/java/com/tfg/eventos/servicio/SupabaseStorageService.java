@@ -21,8 +21,6 @@ public class SupabaseStorageService {
     @Value("${supabase.storage.bucket}")
     private String bucket;
 
-    private final RestClient restClient = RestClient.create();
-
     public String subirImagen(MultipartFile archivo) {
         if (archivo == null || archivo.isEmpty()) {
             return null;
@@ -40,6 +38,8 @@ public class SupabaseStorageService {
         String uploadUrl = supabaseUrl + "/storage/v1/object/" + bucket + "/" + nombreArchivo;
 
         try {
+            // Se crea un cliente local para que las conexiones HTTP se liberen al terminar
+            RestClient restClient = RestClient.create();
             // Se sube el archivo al bucket de Supabase Storage
             restClient.post()
                     .uri(uploadUrl)
