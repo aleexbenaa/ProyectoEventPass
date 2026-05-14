@@ -52,33 +52,8 @@
                     </div>
                 </div>
 
-                <!-- Derecha: 4 stats verticales -->
-                <div class="hero-stats-col">
-                    <div class="hero-stat-item"><span class="stat-icon">📅</span> Más de 2.000 eventos</div>
-                    <div class="hero-stat-item"><span class="stat-icon">⭐</span> Experiencias únicas</div>
-                    <div class="hero-stat-item"><span class="stat-icon">🔒</span> Entradas 100% seguras</div>
-                    <div class="hero-stat-item"><span class="stat-icon">📱</span> Tu entrada siempre contigo</div>
-                </div>
-
             </div>
 
-        </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════
-         CATEGORÍAS
-    ═══════════════════════════════════════ -->
-    <section class="categories-section">
-        <div class="categories-wrapper">
-            <a th:href="@{/eventos}" class="category-pill cat-all active">🎫 Todos</a>
-            <a th:href="@{/busqueda(q='concierto')}" class="category-pill cat-concerts">🎵 Conciertos</a>
-            <a th:href="@{/busqueda(q='deporte')}"   class="category-pill cat-sports">⚽ Deportes</a>
-            <a th:href="@{/busqueda(q='teatro')}"    class="category-pill cat-theater">🎭 Teatro</a>
-            <a th:href="@{/busqueda(q='festival')}"  class="category-pill cat-festival">🎪 Festivales</a>
-            <a th:href="@{/busqueda(q='cine')}"      class="category-pill cat-cinema">🎬 Cine</a>
-            <a th:href="@{/busqueda(q='infantil')}"  class="category-pill cat-kids">🎠 Infantil</a>
-            <a th:href="@{/busqueda(q='musical')}"   class="category-pill cat-theater">🎶 Musical</a>
-            <a th:href="@{/busqueda}"                class="category-pill cat-more">⋯ Ver más</a>
         </div>
     </section>
 
@@ -131,21 +106,6 @@
                             <span class="event-date-month" th:text="${#temporals.format(evento.fechaInicio, 'MMM')}">JUL</span>
                             <span class="event-date-time"  th:text="${#temporals.format(evento.fechaInicio, 'HH:mm')}">21:00</span>
                         </div>
-
-
-                        <!-- Badge dinámico según posición -->
-                        <span class="event-dynamic-badge badge-trending"
-                              th:if="${iterStat.index % 6 == 0}">🔥 Trending</span>
-                        <span class="event-dynamic-badge badge-new"
-                              th:if="${iterStat.index % 6 == 1}">Nuevo</span>
-                        <span class="event-dynamic-badge badge-bestseller"
-                              th:if="${iterStat.index % 6 == 2}">Más vendido</span>
-                        <span class="event-dynamic-badge badge-festival"
-                              th:if="${iterStat.index % 6 == 3}">Festival</span>
-                        <span class="event-dynamic-badge badge-last"
-                              th:if="${iterStat.index % 6 == 4}">Últimas entradas</span>
-                        <span class="event-dynamic-badge badge-demand"
-                              th:if="${iterStat.index % 6 == 5}">Alta demanda</span>
                     </div>
 
                     <!-- Cuerpo de la card -->
@@ -170,45 +130,12 @@
 
                     <!-- Footer de la card -->
                     <div class="event-card-footer">
-                        <span class="event-status-pill pill-available"
-                              th:if="${iterStat.index % 3 != 2}">Entradas disponibles</span>
-                        <span class="event-status-pill pill-last"
-                              th:if="${iterStat.index % 3 == 2}">Últimas entradas</span>
                         <a th:href="@{/eventos/{id}(id=${evento.id})}" class="btn-card-detail">
                             Ver Detalle ›
                         </a>
                     </div>
                 </div>
 
-            </div>
-        </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════
-         TRUST SECTION — Valor añadido
-    ═══════════════════════════════════════ -->
-    <section class="trust-section">
-        <div class="trust-wrapper">
-            <div class="trust-item">
-                <div class="trust-icon">🛡️</div>
-                <div>
-                    <h4>Compra segura</h4>
-                    <p>Tus datos y pagos siempre protegidos con cifrado SSL de última generación.</p>
-                </div>
-            </div>
-            <div class="trust-item">
-                <div class="trust-icon">📱</div>
-                <div>
-                    <h4>Tu entrada digital</h4>
-                    <p>Accede a tus entradas desde el móvil en cualquier momento, sin impresión.</p>
-                </div>
-            </div>
-            <div class="trust-item">
-                <div class="trust-icon">🎧</div>
-                <div>
-                    <h4>Atención al cliente</h4>
-                    <p>Estamos aquí para ayudarte 24/7. Alejandro y Jeddy trabajan incluso festivos. <a th:href="@{/contacto}" style="color:#2563eb;font-weight:600;">Soporte</a>.</p>
-                </div>
             </div>
         </div>
     </section>
