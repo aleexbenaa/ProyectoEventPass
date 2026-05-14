@@ -114,6 +114,19 @@
                              loading="lazy" />
                     </div>
                     <div class="ticket-qr-buttons">
+                        <form th:if="${entrada.estadoPago.name() == 'PENDIENTE'}"
+                              th:action="@{/pago/checkout/{id}(id=${entrada.id})}"
+                              method="post"
+                              style="width:100%;">
+                            <button type="submit" class="btn btn-primary ticket-btn-qr" style="width:100%;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M2 7h20"/>
+                                    <path d="M2 12h20"/>
+                                    <path d="M2 17h20"/>
+                                </svg>
+                                Pagar
+                            </button>
+                        </form>
                         <a th:href="@{/entradas/{id}/qr(id=${entrada.id})}"
                            target="_blank"
                            class="btn btn-primary ticket-btn-qr">
