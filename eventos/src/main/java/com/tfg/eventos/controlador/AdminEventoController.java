@@ -139,6 +139,7 @@ public class AdminEventoController{
         eventoExistente.setFechaInicio(eventoEditado.getFechaInicio());
         eventoExistente.setFechaFin(eventoEditado.getFechaFin());
         eventoExistente.setCapacidad(eventoEditado.getCapacidad());
+        eventoExistente.setPrecio(eventoEditado.getPrecio());
         eventoExistente.setTipo(eventoEditado.getTipo());
         // En edición se actualizan también los validadores y la imagen si cambia
         eventoExistente.setValidadores(usuarioService.obtenerValidadoresPorIds(validadoresIds));

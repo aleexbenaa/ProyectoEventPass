@@ -51,6 +51,7 @@ CREATE TABLE eventos (
     fecha_fin TIMESTAMP NOT NULL,
     capacidad INTEGER NOT NULL,
     estado estado_evento NOT NULL,
+    precio NUMERIC(10,2) NOT NULL DEFAULT 0.00,
     creado_en TIMESTAMP NOT NULL,
     id_organizador BIGINT NOT NULL,
 

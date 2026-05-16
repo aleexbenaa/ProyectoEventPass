@@ -60,7 +60,8 @@ public class PagoController {
                         .setPriceData(
                                 SessionCreateParams.LineItem.PriceData.builder()
                                         .setCurrency("eur")
-                                        .setUnitAmount(2000L)
+                                        .setUnitAmount(entradaReal.getAsistente().getEvento().getPrecio()
+                                                .multiply(java.math.BigDecimal.valueOf(100)).longValue())
                                         .setProductData(
                                                 SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                         .setName(entradaReal.getAsistente().getEvento().getNombre())

@@ -83,15 +83,27 @@
                     </p>
 
                     <!-- Badges de estado -->
-                    <div class="ticket-badges">
+                    <div class="ticket-badges" style="display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;">
                         <span class="ticket-badge"
                               th:classappend="${entrada.estado.name() == 'ACTIVA'} ? 'badge-activa' :
                                              (${entrada.estado.name() == 'USADA'}   ? 'badge-usada'   : 'badge-cancelada')"
                               th:text="${entrada.estado.name()}">ACTIVA</span>
                         <span class="ticket-badge"
+                              th:if="${entrada.estado.name() != 'USADA'}"
                               th:classappend="${entrada.estadoPago.name() == 'PAGADO'}   ? 'badge-pagado' :
                                              (${entrada.estadoPago.name() == 'PENDIENTE'} ? 'badge-pendiente' : 'badge-cancelada')"
                               th:text="${entrada.estadoPago.name() == 'PENDIENTE'} ? 'PENDIENTE DE USO' : ${entrada.estadoPago.name()}">ESTADO PAGO</span>
+                        <form th:action="@{/mis_entradas/{id}/eliminar(id=${entrada.id})}" method="post" style="display:inline; margin:0;">
+                            <button type="submit"
+                                    onclick="return confirm('¿Eliminar esta entrada? Esta acción no se puede deshacer.')"
+                                    style="background:transparent; border:1px solid #555; color:#888; border-radius:6px; padding:3px 8px; cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-size:.78rem;"
+                                    onmouseenter="this.style.color='#ef4444'; this.style.borderColor='#ef4444';"
+                                    onmouseleave="this.style.color='#888'; this.style.borderColor='#555';"
+                                    title="Eliminar entrada">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                                Eliminar
+                            </button>
+                        </form>
                     </div>
 
                     <!-- Fecha de compra -->
@@ -116,8 +128,7 @@
                     <div class="ticket-qr-buttons">
                         <form th:if="${entrada.estadoPago.name() == 'PENDIENTE'}"
                               th:action="@{/pago/checkout/{id}(id=${entrada.id})}"
-                              method="post"
-                              style="width:100%;">
+                              method="post">
                             <button type="submit" class="btn btn-primary ticket-btn-qr" style="width:100%;">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M2 7h20"/>

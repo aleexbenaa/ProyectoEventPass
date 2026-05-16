@@ -49,6 +49,9 @@ public class Evento {
     private TipoEvento tipo;
 
     @Column(nullable = false)
+    private java.math.BigDecimal precio;
+
+    @Column(nullable = false)
     private LocalDateTime creado_en;
 
     @ManyToOne
@@ -193,5 +196,13 @@ public class Evento {
 
     public void setValidadores(List<Usuario> validadores) {
         this.validadores = validadores;
+    }
+
+    public java.math.BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(java.math.BigDecimal precio) {
+        this.precio = precio;
     }
 }

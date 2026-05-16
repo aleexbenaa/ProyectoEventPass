@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.tfg.eventos.entidad.Asistente;
 import com.tfg.eventos.entidad.Entrada;
@@ -59,6 +60,20 @@ public class UsuarioController {
         model.addAttribute("entradas", entradas);
         return "mis_entradas";
         }
+
+    @PostMapping("/mis_entradas/{id}/eliminar")
+    public String eliminarEntrada(@PathVariable Long id, Authentication authentication) {
+        Optional<Entrada> entradaOpt = entradaService.obtenerPorId(id);
+        if (entradaOpt.isEmpty()) {
+            return "redirect:/mis_entradas";
+        }
+        Entrada entrada = entradaOpt.get();
+        if (!entrada.getAsistente().getUsuario().getEmail().equals(authentication.getName())) {
+            return "redirect:/mis_entradas";
+        }
+        entradaService.eliminar(id);
+        return "redirect:/mis_entradas";
+    }
 
     @GetMapping(value="/entradas/{id}/qr", produces = MediaType.IMAGE_PNG_VALUE)
     @ResponseBody
