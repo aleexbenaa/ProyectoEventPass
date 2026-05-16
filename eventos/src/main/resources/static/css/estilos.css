@@ -1213,7 +1213,7 @@ a:hover {
 /* --- Imagen --- */
 .ticket-img-wrap {
     position: relative;
-    flex: 0 0 170px;
+    flex: 0 0 140px;
     min-height: 120px;
     overflow: hidden;
 }
@@ -1363,7 +1363,7 @@ a:hover {
 
 /* --- Sección QR --- */
 .ticket-qr-section {
-    flex: 0 0 230px;
+    flex: 0 0 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -2165,4 +2165,20 @@ a:hover {
     .ticket-info-right {
         text-align: left;
     }
+}
+/* ============================================================
+   OVERRIDE: botones del ticket en fila (Pagar + Ver QR juntos)
+   ============================================================ */
+.ticket-qr-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+    width: 100%;
+}
+
+/* OVERRIDE: fecha de compra alineada a la izquierda */
+.ticket-compra-info {
+    align-self: flex-start;
+    text-align: left;
+    justify-content: flex-start;
 }
