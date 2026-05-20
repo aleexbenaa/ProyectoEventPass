@@ -226,19 +226,26 @@ public class AdminEventoController{
         int entradasVendidas = 0;
         int entradasUsadas = 0;
 
+        List<Evento> eventosPublicadosList = new ArrayList<>();
+        List<Entrada> todasLasEntradas = new ArrayList<>();
+        List<Entrada> entradasValidadasList = new ArrayList<>();
+
         // Se recorren los eventos del admin para calcular estadísticas del panel
         for(Evento evento : eventosAdmin){
             if (evento.getEstado() == EstadoEvento.PUBLICADO){
                 eventosPublicados++;
+                eventosPublicadosList.add(evento);
             }
 
             List<Asistente> asistentesEvento = asistenteService.obtenerPorEvento(evento);
             for (Asistente asistente : asistentesEvento) {
                 List<Entrada> entradasAsistente = entradaService.obtenerPorAsistente(asistente);
+                todasLasEntradas.addAll(entradasAsistente);
                 entradasVendidas += entradasAsistente.size();
                 for (Entrada entrada : entradasAsistente) {
                     if (entrada.getEstado() == EstadoEntrada.USADA) {
                         entradasUsadas++;
+                        entradasValidadasList.add(entrada);
                     }
                 }
             }
@@ -248,6 +255,10 @@ public class AdminEventoController{
         model.addAttribute("eventosPublicados", eventosPublicados);
         model.addAttribute("entradasVendidas", entradasVendidas);
         model.addAttribute("entradasUsadas", entradasUsadas);
+        model.addAttribute("eventosAdmin", eventosAdmin);
+        model.addAttribute("eventosPublicadosList", eventosPublicadosList);
+        model.addAttribute("todasLasEntradas", todasLasEntradas);
+        model.addAttribute("entradasValidadasList", entradasValidadasList);
         return "admin/dashboard";
     }
 

@@ -453,6 +453,23 @@ a:hover {
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+.form-control.is-invalid {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-control.is-invalid:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+
+.invalid-feedback {
+    display: block;
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+}
+
 /* Tablas Admin */
 .admin-header {
     display: flex;
@@ -515,6 +532,20 @@ a:hover {
     box-shadow: var(--shadow);
     text-align: center;
     border-left: 4px solid var(--primary-color);
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    user-select: none;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -2px rgb(0 0 0 / 0.15);
+}
+
+.stat-card.active {
+    background: #eff6ff;
+    border-left-color: var(--primary-hover);
+    box-shadow: 0 0 0 2px var(--primary-color), var(--shadow);
 }
 
 .stat-value {
@@ -528,6 +559,85 @@ a:hover {
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+}
+
+/* Dashboard Tab Panels */
+.dashboard-tables {
+    margin-top: 0.5rem;
+}
+
+.dashboard-tab-panel {
+    display: none;
+    animation: fadeSlideIn 0.25s ease;
+}
+
+.dashboard-tab-panel.active {
+    display: block;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.panel-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.panel-count {
+    background: #eff6ff;
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid #bfdbfe;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    letter-spacing: 0.02em;
+}
+
+.status-publicado  { background: #dcfce7; color: #15803d; }
+.status-borrador,
+.status-planificado { background: #f1f5f9; color: #64748b; }
+.status-cancelado  { background: #fee2e2; color: #dc2626; }
+.status-finalizado { background: #e0f2fe; color: #0369a1; }
+.status-activa     { background: #dcfce7; color: #15803d; }
+.status-usada      { background: #f1f5f9; color: #64748b; }
+.status-pagado     { background: #dbeafe; color: #1d4ed8; }
+.status-pendiente  { background: #fef9c3; color: #854d0e; }
+
+.table td.td-desc {
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+    .dashboard-tab-panel .table-container {
+        font-size: 0.85rem;
+    }
+    .td-desc { display: none; }
 }
 
 /* Footer */
@@ -2181,4 +2291,15 @@ a:hover {
     align-self: flex-start;
     text-align: left;
     justify-content: flex-start;
+}
+
+/* Imagen de entrada USADA: blanco y negro */
+.ticket-img-usada {
+    filter: grayscale(100%);
+    opacity: 0.72;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+}
+
+.ticket-card:hover .ticket-img-usada {
+    transform: none;
 }

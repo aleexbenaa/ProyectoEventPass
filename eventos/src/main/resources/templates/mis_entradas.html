@@ -44,9 +44,11 @@
                     <img th:if="${entrada.asistente.evento.imagenUrl != null and !entrada.asistente.evento.imagenUrl.isEmpty()}"
                          th:src="${entrada.asistente.evento.imagenUrl}"
                          th:alt="${entrada.asistente.evento.nombre}"
-                         class="ticket-img" />
+                         class="ticket-img"
+                         th:classappend="${entrada.estado.name() == 'USADA'} ? 'ticket-img-usada'" />
                     <div th:unless="${entrada.asistente.evento.imagenUrl != null and !entrada.asistente.evento.imagenUrl.isEmpty()}"
-                         class="ticket-img-placeholder">
+                         class="ticket-img-placeholder"
+                         th:classappend="${entrada.estado.name() == 'USADA'} ? 'ticket-img-usada'">
                         <span>🎭</span>
                     </div>
                     <span th:if="${entrada.asistente.evento.tipo != null}"

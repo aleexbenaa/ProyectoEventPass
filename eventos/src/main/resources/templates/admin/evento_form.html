@@ -19,7 +19,7 @@
             </div>
 
             <!-- Usamos un solo formulario que cambia su ruta dependiendo de si estamos creando o editando -->
-            <form method="post" enctype="multipart/form-data" th:action="${evento.id == null ? '/admin/eventos' : '/admin/eventos/' + evento.id}" th:object="${evento}">
+            <form method="post" enctype="multipart/form-data" th:action="${evento.id == null ? '/admin/eventos' : '/admin/eventos/' + evento.id}" th:object="${evento}" novalidate>
 
                 <div class="form-group">
                     <label for="nombre">Nombre del Evento</label>
@@ -89,7 +89,7 @@
                 <!-- Selección de validadores opcional (si tu controlador lo necesita) -->
                 <div class="form-group" th:if="${validadoresDisponibles != null and !#lists.isEmpty(validadoresDisponibles)}">
                     <label>Asignar Validadores</label>
-                    <div style="border: 1px solid var(--border-color); padding: 1rem; border-radius: 6px; max-height: 150px; overflow-y: auto;">
+                    <div id="validadoresContainer" style="border: 1px solid var(--border-color); padding: 1rem; border-radius: 6px; max-height: 150px; overflow-y: auto;">
                         <div th:each="validador : ${validadoresDisponibles}" style="margin-bottom: 0.5rem;">
                             <input type="checkbox" name="validadoresIds" th:value="${validador.id}"
                                    th:id="${'val_' + validador.id}"
@@ -108,5 +108,119 @@
     </main>
 
     <div th:replace="fragments/footer :: footer"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.querySelector('form[novalidate]');
+            var requiredFields = ['nombre', 'descripcion', 'ubicacion', 'fechaInicio', 'fechaFin', 'capacidad', 'precio'];
+
+            function showError(field) {
+                field.classList.add('is-invalid');
+                if (!field.parentNode.querySelector('.invalid-feedback')) {
+                    var msg = document.createElement('span');
+                    msg.className = 'invalid-feedback';
+                    msg.textContent = 'Este campo es obligatorio';
+                    field.parentNode.insertBefore(msg, field.nextSibling);
+                }
+            }
+
+            function clearError(field) {
+                field.classList.remove('is-invalid');
+                var msg = field.parentNode.querySelector('.invalid-feedback');
+                if (msg) msg.remove();
+            }
+
+            function showGroupError(container) {
+                container.style.borderColor = '#dc2626';
+                container.style.boxShadow = '0 0 0 3px rgba(220, 38, 38, 0.1)';
+                if (!container.parentNode.querySelector('.invalid-feedback')) {
+                    var msg = document.createElement('span');
+                    msg.className = 'invalid-feedback';
+                    msg.textContent = 'Este campo es obligatorio';
+                    container.parentNode.appendChild(msg);
+                }
+            }
+
+            function clearGroupError(container) {
+                container.style.borderColor = '';
+                container.style.boxShadow = '';
+                var msg = container.parentNode.querySelector('.invalid-feedback');
+                if (msg) msg.remove();
+            }
+
+            // Validación en tiempo real para campos de texto/número/fecha
+            requiredFields.forEach(function (id) {
+                var field = document.getElementById(id);
+                if (!field) return;
+                ['input', 'change'].forEach(function (evt) {
+                    field.addEventListener(evt, function () {
+                        if (field.value.trim() !== '') clearError(field);
+                    });
+                });
+            });
+
+            // Validación en tiempo real para tipo de evento
+            var tipoField = document.getElementById('tipo');
+            if (tipoField) {
+                tipoField.addEventListener('change', function () {
+                    if (tipoField.value !== '') clearError(tipoField);
+                });
+            }
+
+            // Validación en tiempo real para validadores
+            var validadoresContainer = document.getElementById('validadoresContainer');
+            if (validadoresContainer) {
+                validadoresContainer.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
+                    cb.addEventListener('change', function () {
+                        var anyChecked = validadoresContainer.querySelectorAll('input[type="checkbox"]:checked').length > 0;
+                        if (anyChecked) clearGroupError(validadoresContainer);
+                    });
+                });
+            }
+
+            form.addEventListener('submit', function (e) {
+                var hasError = false;
+
+                // Validar campos de texto/número/fecha
+                requiredFields.forEach(function (id) {
+                    var field = document.getElementById(id);
+                    if (!field) return;
+                    if (field.value.trim() === '') {
+                        showError(field);
+                        hasError = true;
+                    } else {
+                        clearError(field);
+                    }
+                });
+
+                // Validar tipo de evento
+                if (tipoField) {
+                    if (tipoField.value === '') {
+                        showError(tipoField);
+                        hasError = true;
+                    } else {
+                        clearError(tipoField);
+                    }
+                }
+
+                // Validar que haya al menos un validador seleccionado
+                if (validadoresContainer) {
+                    var anyChecked = validadoresContainer.querySelectorAll('input[type="checkbox"]:checked').length > 0;
+                    if (!anyChecked) {
+                        showGroupError(validadoresContainer);
+                        hasError = true;
+                    } else {
+                        clearGroupError(validadoresContainer);
+                    }
+                }
+
+                if (hasError) {
+                    e.preventDefault();
+                    var firstInvalid = form.querySelector('.is-invalid');
+                    if (firstInvalid) firstInvalid.focus();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

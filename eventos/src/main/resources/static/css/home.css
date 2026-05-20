@@ -195,8 +195,8 @@ body.home-page {
 }
 
 .hero-search-btn {
-    background: #2563eb;
-    color: white;
+    background: transparent;
+    color: #64748b;
     border: none;
     border-radius: 50%;
     width: 42px;
@@ -205,14 +205,14 @@ body.home-page {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 1.1rem;
     flex-shrink: 0;
-    transition: background 0.2s ease;
+    transition: color 0.2s ease;
     margin: 4px 0;
 }
 
 .hero-search-btn:hover {
-    background: #1d4ed8;
+    color: #2563eb;
 }
 
 /* ==========================

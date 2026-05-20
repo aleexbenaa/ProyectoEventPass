@@ -15,7 +15,10 @@
                 <h1 style="color: var(--primary-color);">Mis Eventos</h1>
                 <p style="color: var(--text-light);">Administra, edita y publica tus eventos creados.</p>
             </div>
-            <a th:href="@{/admin/eventos/nuevo}" class="btn btn-primary">+ Crear Nuevo Evento</a>
+            <div style="display: flex; gap: 0.75rem;">
+                <a th:href="@{/admin/dashboard}" class="btn btn-outline">Volver al panel de control</a>
+                <a th:href="@{/admin/eventos/nuevo}" class="btn btn-primary">+ Crear Nuevo Evento</a>
+            </div>
         </div>
 
         <div class="table-container">
@@ -68,9 +71,6 @@
             </table>
         </div>
 
-        <div style="margin-top: 1.5rem;">
-            <a th:href="@{/admin/dashboard}" class="btn btn-outline">Volver al Dashboard</a>
-        </div>
     </main>
 
     <div th:replace="fragments/footer :: footer"></div>

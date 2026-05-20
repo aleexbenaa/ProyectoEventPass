@@ -169,6 +169,20 @@
             .contact-grid, .faq-grid, .trust-bar { grid-template-columns: 1fr; }
             .contact-grid .c-card:last-child { grid-column: auto; }
         }
+        .form-input.is-invalid {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+        .form-input.is-invalid:focus {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+        }
+        .invalid-feedback {
+            display: block;
+            color: #dc2626;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+        }
     </style>
 </head>
 <body class="contact-page">
@@ -197,19 +211,19 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                         ¡Mensaje enviado! Te responderemos pronto.
                     </div>
-                    <form onsubmit="enviarForm(event)">
+                    <form onsubmit="enviarForm(event)" novalidate>
                         <div class="form-row">
                             <label>Nombre completo</label>
-                            <input type="text" class="form-input" placeholder="Tu nombre" required>
+                            <input type="text" id="contactNombre" class="form-input" placeholder="Tu nombre">
                         </div>
                         <div class="form-row">
                             <label>Correo electrónico</label>
-                            <input type="email" class="form-input" placeholder="tu@email.com" required>
+                            <input type="email" id="contactEmail" class="form-input" placeholder="tu@email.com">
                         </div>
                         <div class="form-row">
                             <label>Asunto</label>
-                            <select class="form-input" required>
-                                <option value="" disabled selected>Selecciona un asunto</option>
+                            <select id="contactAsunto" class="form-input">
+                                <option value="">Selecciona un asunto</option>
                                 <option>Consulta</option>
                                 <option>Incidencia</option>
                                 <option>Sugerencia</option>
@@ -218,7 +232,7 @@
                         </div>
                         <div class="form-row">
                             <label>Mensaje</label>
-                            <textarea class="form-input" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                            <textarea id="contactMensaje" class="form-input" placeholder="Escribe tu mensaje aquí..."></textarea>
                         </div>
                         <button type="submit" class="btn-send">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -399,6 +413,40 @@
         }
         function enviarForm(e) {
             e.preventDefault();
+            var fields = [
+                { id: 'contactNombre', check: function(v) { return v.trim() !== ''; } },
+                { id: 'contactEmail',  check: function(v) { return v.trim() !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); } },
+                { id: 'contactAsunto', check: function(v) { return v !== ''; } },
+                { id: 'contactMensaje',check: function(v) { return v.trim() !== ''; } }
+            ];
+            var hasError = false;
+            fields.forEach(function(f) {
+                var el = document.getElementById(f.id);
+                var existing = el.parentNode.querySelector('.invalid-feedback');
+                if (!f.check(el.value)) {
+                    el.classList.add('is-invalid');
+                    if (!existing) {
+                        var msg = document.createElement('span');
+                        msg.className = 'invalid-feedback';
+                        msg.textContent = 'Este campo es obligatorio';
+                        el.parentNode.appendChild(msg);
+                    }
+                    hasError = true;
+                } else {
+                    el.classList.remove('is-invalid');
+                    if (existing) existing.remove();
+                }
+                ['input', 'change'].forEach(function(evt) {
+                    el.addEventListener(evt, function() {
+                        if (f.check(el.value)) {
+                            el.classList.remove('is-invalid');
+                            var m = el.parentNode.querySelector('.invalid-feedback');
+                            if (m) m.remove();
+                        }
+                    }, { once: false });
+                });
+            });
+            if (hasError) return;
             var al = document.getElementById('sendAlert');
             al.style.display = 'flex';
             e.target.reset();
