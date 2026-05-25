@@ -12,7 +12,6 @@ import com.tfg.eventos.entidad.Entrada;
 import com.tfg.eventos.entidad.RegistroAcceso;
 import com.tfg.eventos.entidad.Usuario;
 import com.tfg.eventos.entidad.enums.EstadoEntrada;
-import com.tfg.eventos.entidad.enums.EstadoPago;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -151,14 +150,6 @@ public class ValidadorApiController {
         if (entradaObtenida.getEstado() == EstadoEntrada.CANCELADA){
             respuesta.put("estado", "cancelada");
             respuesta.put("mensaje", "La entrada ha sido cancelada.");
-            return respuesta;
-        }
-        // Solo se exige pago en eventos de precio mayor que cero
-        java.math.BigDecimal precioEvento = entradaObtenida.getAsistente().getEvento().getPrecio();
-        boolean eventoEsDePago = precioEvento != null && precioEvento.compareTo(java.math.BigDecimal.ZERO) > 0;
-        if (eventoEsDePago && entradaObtenida.getEstadoPago() != EstadoPago.PAGADO) {
-            respuesta.put("estado", "sinpagar");
-            respuesta.put("mensaje", "La entrada no ha sido pagada.");
             return respuesta;
         }
         // Si pasa todas las comprobaciones, la entrada se marca como usada
